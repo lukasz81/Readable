@@ -11,8 +11,7 @@ const defaultData = {
     author: 'thingtwo',
     category: 'react',
     voteScore: 6,
-    deleted: false,
-    commentCount: 2
+    deleted: false
   },
   "6ni6ok3ym7mf1p33lnez": {
     id: '6ni6ok3ym7mf1p33lnez',
@@ -22,8 +21,17 @@ const defaultData = {
     author: 'thingone',
     category: 'redux',
     voteScore: -5,
-    deleted: false,
-    commentCount: 0
+    deleted: false
+  },
+  "6ni6ok3ym7mf1p33lneuda": {
+    id: '6ni6ok3ym7mf1p33lneuda',
+    timestamp: 1468979767190,
+    title: 'Udacity or not ?',
+    body: 'Just kidding. It takes more than 10 minutes to learn technology.',
+    author: 'lukasz',
+    category: 'udacity',
+    voteScore: 5,
+    deleted: false
   }
 }
 
