@@ -20,13 +20,18 @@ class Navigation extends Component {
       });
   }
 
+  chooseClassNameForLink(currentPath,path) {
+    return currentPath === `/` + path ? 'active':'inactive'
+  }
+
   render() {
     const {categories} = this.state;
+    const currentPath = this.props.location.pathname;
     return (
       <ul className="Nav">
-        <li><Link to="/">ALL</Link></li>
+        <li className={this.chooseClassNameForLink(currentPath,'')}><Link to="/">ALL</Link></li>
         {categories.map( (category,index) => (
-          <li key={index}>
+          <li className={this.chooseClassNameForLink(currentPath,category.path)} key={index}>
             <Link to={category.path}>
               {category.name.toUpperCase()}
             </Link>
