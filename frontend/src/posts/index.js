@@ -6,14 +6,14 @@ class Posts extends Component {
         super(props);
         this.state = {
             posts: [],
-            category: this.props.match.params.category || 'all'
+            category: this.props.match.params.category
         }
     }
 
     componentWillReceiveProps(nextProps) {
         const category = nextProps.match.params.category;
         this.setState({
-            category: category === undefined ? 'all' : category.toString()
+            category: category
         })
     }
 
@@ -33,7 +33,7 @@ class Posts extends Component {
         const currentPath = this.props.location.pathname;
         return (
             <div className="posts">
-                {posts.filter(post => category === post.category || category === 'all').map(post => (
+                {posts.filter(post => category === post.category || !category).map(post => (
                     <Post key={post.category} post={post} path={currentPath}/>
                 ))}
             </div>

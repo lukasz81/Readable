@@ -5,17 +5,21 @@ import Navigation from '../navigation';
 import Posts from '../posts';
 
 class App extends Component {
-	render() {
+	render () {
 		return (
-      <BrowserRouter>
-        <div className='wrapper'>
-          <Navigation/>
-          <Switch>
-            <Route exact path="/" component={Posts}/>
-            <Route path="/:category" component={Posts}/>
-          </Switch>
-        </div>
-      </BrowserRouter>
+            <BrowserRouter>
+                <div className='wrapper'>
+                    <Route render={ props => (
+                        <Navigation {...props}/>
+                    )}/>
+                    <Switch>
+                        <Route exact path="/" component={Posts}/>
+                        <Route path="/:category" render={ props => (
+                            <Posts {...props}/>
+                        )}/>
+                    </Switch>
+                </div>
+            </BrowserRouter>
 		);
 	}
 }
