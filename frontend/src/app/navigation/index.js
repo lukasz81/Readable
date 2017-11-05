@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import AddIcon from 'react-icons/lib/md/add-circle-outline'
-import {showModal} from "./actions";
+import {connect} from "react-redux";
 
 class Navigation extends Component {
     constructor(props) {
@@ -27,9 +27,7 @@ class Navigation extends Component {
     }
 
     onShowModal() {
-        this.props.store.dispatch(showModal({
-            modalOpen: true
-        }))
+        this.props.showModal();
     }
 
     render() {

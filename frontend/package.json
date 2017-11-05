@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/react": "^16.0.20",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-icons": "^2.2.7",

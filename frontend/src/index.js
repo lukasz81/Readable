@@ -5,7 +5,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { createStore, applyMiddleware, compose } from 'redux';
 import App from './app';
 import { Provider } from 'react-redux';
-import { navigation_reducer } from './navigation/reducer.js'
+import { navigation_reducer } from './app/navigation/reducer.js'
 
 const logger = store => next => action => {
     console.group(action.type);
@@ -17,9 +17,6 @@ const logger = store => next => action => {
 };
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-// const store = createStore(navigation_reducer);
-// console.log(store.getState());
-
 const store = createStore(
     navigation_reducer,
     composeEnhancers(
@@ -27,6 +24,8 @@ const store = createStore(
     )
 );
 
-ReactDOM.render(<App store={store}/>, document.getElementById('root'));
-// ReactDOM.render(<Provider store={store}><App/></Provider>, document.getElementById('root'));
+ReactDOM.render(
+    <Provider store={store}>
+        <App/>
+    </Provider>, document.getElementById('root'));
 registerServiceWorker();
