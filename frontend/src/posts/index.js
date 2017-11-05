@@ -24,7 +24,9 @@ class Posts extends Component {
                 return ( res.json() )
             })
             .then(posts => {
-                this.setState({posts: posts})
+                this.setState({posts: posts.sort((a,b) => {
+                    return b.voteScore - a.voteScore
+                })})
             });
     }
 

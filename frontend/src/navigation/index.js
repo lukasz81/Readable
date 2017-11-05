@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
+import AddIcon from 'react-icons/lib/md/add-circle-outline'
+import {showModal} from "./actions";
 
 class Navigation extends Component {
     constructor(props) {
@@ -24,6 +26,12 @@ class Navigation extends Component {
         return currentPath === `/${path}` ? 'active' : 'inactive'
     }
 
+    onShowModal() {
+        this.props.store.dispatch(showModal({
+            modalOpen: true
+        }))
+    }
+
     render() {
         const {categories} = this.state;
         const currentPath = this.props.location.pathname;
@@ -37,6 +45,7 @@ class Navigation extends Component {
                         </Link>
                     </li>
                 ))}
+                <li title="Add post" onClick={() => this.onShowModal()} className='add-new active'><AddIcon size={35}/></li>
             </ul>
         );
     }
