@@ -24,7 +24,9 @@ class App extends Component {
             <BrowserRouter>
                 <div className='wrapper'>
                     <Route render={props => (
-                        <Navigation showModal={() => this.onShowModal()} store={store} {...props}/>
+                        <Navigation emitOnShowModal={() => this.onShowModal()}
+                                    store={store}
+                                    {...props}/>
                     )}/>
                     <Switch>
                         <Route exact path="/" component={Posts}/>
@@ -35,9 +37,8 @@ class App extends Component {
                     <Modal
                         className='modal'
                         overlayClassName='overlay'
-                        isOpen={this.props.state.modalOpen}
-                        contentLabel='Modal'
-                    >
+                        isOpen={this.props.modalOpen}
+                        contentLabel='Modal'>
                         <div>Add a new post</div>
                         <CancelIcon onClick={() => this.onHideModal()} className="close-icon"/>
                     </Modal>
@@ -48,7 +49,10 @@ class App extends Component {
 }
 
 function mapStateToProps (state) {
-    return {state};
+    return {
+        state,
+        modalOpen: state.modalReducer.modalOpen
+    };
 }
 
 function mapDispatchToProps (dispatch) {

@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import Post from './post/index'
+import Post from './post/index';
+import {connect} from "react-redux";
+import {storePosts} from './actions';
 
 class Posts extends Component {
     constructor(props) {
@@ -17,22 +19,29 @@ class Posts extends Component {
         })
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const url = `${process.env.REACT_APP_BACKEND}/posts`;
         fetch(url, {headers: {'Authorization': '*'}})
             .then(res => {
                 return ( res.json() )
             })
             .then(posts => {
-                this.setState({posts: posts.sort((a,b) => {
-                    return b.voteScore - a.voteScore
-                })})
+                this.props.storeFetchedPosts(this.compareFunction(posts,'score'))
             });
     }
 
+    compareFunction(elements,sort) {
+        return elements.sort((a,b) => {
+            return sort === 'score' ? b.voteScore - a.voteScore : b.timestamp - a.timestamp
+        })
+    }
+
     render() {
-        const {posts, category} = this.state;
+        const {category} = this.state;
+        const {sortBy} = this.props;
+        const posts = this.props.posts ? this.compareFunction(this.props.posts,sortBy) : [];
         const currentPath = this.props.location.pathname;
+        console.log(posts,sortBy);
         return (
             <div className="posts">
                 {posts.filter(post => category === post.category || !category).map(post => (
@@ -43,4 +52,17 @@ class Posts extends Component {
     }
 }
 
-export default Posts;
+function mapStateToProps (state) {
+    return {
+        posts: state.postsReducer.posts,
+        sortBy: state.toggleSortReducer.sortBy
+    };
+}
+
+function mapDispatchToProps (dispatch) {
+    return {
+        storeFetchedPosts: (data) => dispatch(storePosts(data))
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Posts);

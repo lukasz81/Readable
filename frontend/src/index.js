@@ -4,8 +4,8 @@ import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 import { createStore, applyMiddleware, compose } from 'redux';
 import App from './app';
-import { Provider } from 'react-redux';
-import { navigation_reducer } from './app/navigation/reducer.js'
+import {Provider} from 'react-redux';
+import {rootReducer} from './root-reducer';
 
 const logger = store => next => action => {
     console.group(action.type);
@@ -18,7 +18,7 @@ const logger = store => next => action => {
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
-    navigation_reducer,
+    rootReducer,
     composeEnhancers(
         applyMiddleware(logger)
     )
