@@ -16,10 +16,23 @@ body {
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
 }
-.info small {
+.post-info small {
     display: inline-block;
     margin: 0 5px 0 0;
     font-size:13px;
+}
+
+.color--red {
+    color: #ff4234;
+}
+
+.color--green {
+    color: #00bcd4;
+}
+
+.actionable {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 p {
