@@ -42,19 +42,18 @@ class Navigation extends Component {
     render() {
         const {categories} = this.state;
         const currentPath = this.props.location.pathname;
-        console.log('propsy ',this.props.sort);
         return (
-            <ul className="Nav">
-                <li className={Navigation.chooseClassNameForLink(currentPath, '')}><Link to="/">ALL</Link></li>
+            <ul className="nav">
+                <Link to="/"><li className={Navigation.chooseClassNameForLink(currentPath, '')}>ALL</li></Link>
                 {categories.map((category, index) => (
-                    <li className={Navigation.chooseClassNameForLink(currentPath, category.path)} key={index}>
-                        <Link to={category.path}>
+                    <Link key={index} to={`/${category.path}`}>
+                        <li className={Navigation.chooseClassNameForLink(currentPath, category.path)}>
                             {category.name.toUpperCase()}
-                        </Link>
-                    </li>
+                        </li>
+                    </Link>
                 ))}
                 <li title="Add post" onClick={() => this.onShowModal()} className='add-new nav-icon active'><AddIcon size={Navigation.ICON_SIZE}/></li>
-                <li title={`Sort by ${this.props.sort}`} className='nav-icon active'>
+                <li title={`Currently sorted by ${this.props.sort}`} className='nav-icon active'>
                     <SortIcon className={this.props.sort}
                               onClick={() => this.onToggleSort()}
                               size={Navigation.ICON_SIZE}/>

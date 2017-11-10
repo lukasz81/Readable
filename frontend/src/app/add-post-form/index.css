@@ -1,0 +1,18 @@
+form.add-post input , form.add-post textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    min-height: 30px;
+    outline: none;
+    font-size: 15px;
+}
+form.add-post label {
+    margin-right: 10px;
+}
+
+form.add-post button {
+    padding: 10px 25px;
+    text-transform: uppercase;
+    width:100%;
+}

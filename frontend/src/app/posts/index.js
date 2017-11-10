@@ -39,13 +39,12 @@ class Posts extends Component {
     render() {
         const {category} = this.state;
         const {sortBy} = this.props;
-        const posts = this.props.posts ? this.compareFunction(this.props.posts,sortBy) : [];
+        const posts = this.props.posts ? this.compareFunction(this.props.posts, sortBy) : [];
         const currentPath = this.props.location.pathname;
-        console.log(posts,sortBy);
         return (
             <div className="posts">
                 {posts.filter(post => category === post.category || !category).map(post => (
-                    <Post key={post.category} post={post} path={currentPath}/>
+                    <Post key={post.id} post={post} path={currentPath}/>
                 ))}
             </div>
         );

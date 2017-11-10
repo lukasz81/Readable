@@ -3,11 +3,13 @@ import {Route, Switch} from 'react-router';
 import {BrowserRouter} from 'react-router-dom';
 import Navigation from './navigation';
 import Posts from './posts';
+import Post from './posts/post';
 import Modal from 'react-modal';
 import CancelIcon from 'react-icons/lib/md/cancel'
 import './index.css';
 import {showModal,closeModal} from "./navigation/actions";
 import {connect} from "react-redux";
+import AddPost from "./add-post-form/index";
 
 class App extends Component {
 
@@ -30,6 +32,7 @@ class App extends Component {
                     )}/>
                     <Switch>
                         <Route exact path="/" component={Posts}/>
+                        <Route path="/:category/:id" component={Post}/>
                         <Route path="/:category" render={props => (
                             <Posts {...props}/>
                         )}/>
@@ -39,8 +42,9 @@ class App extends Component {
                         overlayClassName='overlay'
                         isOpen={this.props.modalOpen}
                         contentLabel='Modal'>
-                        <div>Add a new post</div>
+                        <h3 className='margin--bottom'>Add a new post</h3>
                         <CancelIcon onClick={() => this.onHideModal()} className="close-icon"/>
+                        <AddPost/>
                     </Modal>
                 </div>
             </BrowserRouter>

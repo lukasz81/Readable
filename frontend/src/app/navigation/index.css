@@ -31,7 +31,7 @@ li {
     transition: background 0.2s ease-in-out;
 }
 
-a {
+.nav a {
     color: white;
     font-weight: 200;
     text-decoration: none;

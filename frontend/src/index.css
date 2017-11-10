@@ -29,3 +29,11 @@ p {
 small {
     color: #9a9a9a;
 }
+
+.margin--bottom {
+    margin-bottom:20px;
+}
+a {
+    text-decoration: none;
+    color: #333;
+}
