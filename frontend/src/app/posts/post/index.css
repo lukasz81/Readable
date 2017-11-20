@@ -1,0 +1,25 @@
+.post-comment {
+    padding: 20px 10px;
+    background: white;
+    border: 1px solid #e6e6e6;
+    margin: 0 0 20px 0;
+}
+.attached--left {
+    border-radius: 0 20px 20px 20px;
+}
+.attached--right {
+    border-radius: 20px 0 20px 20px;
+    text-align: right;
+}
+.post-comment--cta {
+    background: #fff;
+    display: inline;
+    float: right;
+    cursor: pointer;
+}
+.post-comment--cta small {
+    color: #00bcd4;
+}
+form.add-comment {
+    position: relative;
+}

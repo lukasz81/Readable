@@ -7,10 +7,10 @@ import Post from './posts/post';
 import Modal from 'react-modal';
 import CancelIcon from 'react-icons/lib/md/cancel'
 import './index.css';
-import {openModal,closeModal} from "./navigation/actions";
+import {openModal,closeModal} from "./shared-modal-content/actions";
 import {addPost} from "./posts/post/actions";
 import {connect} from "react-redux";
-import ModalContent from "./modal-content/index";
+import ModalContent from "./shared-modal-content/index";
 import createBrowserHistory from 'history/createBrowserHistory';
 
 const history = createBrowserHistory();

@@ -8,13 +8,18 @@ body {
 }
 
 .wrapper {
-    padding: 0 20px;
+    padding: 10px 20px;
     min-width: 440px;
+    max-width: 600px;
+    min-height: 100vh;
+    background: #607d8b0d;
+    margin: auto;
 }
-
 .post {
-    margin: 0 0 10px 0;
     border-bottom: 1px dashed #ddd;
+}
+.post, .post-detail {
+    margin: 0 0 10px 0;
     padding-bottom: 10px;
 }
 .post-info small {

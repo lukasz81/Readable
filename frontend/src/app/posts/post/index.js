@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import Moment from 'react-moment';
 import {Link} from 'react-router-dom';
-import {closeModal,openModal} from "../../navigation/actions";
+import {closeModal,openModal} from "../../shared-modal-content/actions";
 import {editPost} from "./actions";
+import {Comment} from "./comment"
 import {connect} from "react-redux";
+import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import './index.css';
 
 class Post extends Component {
@@ -24,6 +26,10 @@ class Post extends Component {
         }
     }
 
+    componentWillReceiveProps() {
+        if (this.props.newComment) this.fetchCommentsForPost(this.state.post.id)
+    }
+
     fetchCommentsForPost(id) {
         const url = `${Post.API_URL}/posts/${id}/comments`;
         fetch(url, {headers: {'Authorization': '*'}})
@@ -40,33 +46,42 @@ class Post extends Component {
         fetch(url, {headers: {'Authorization': '*'}})
             .then(res => {
                 return ( res.json() )
-            })
-            .then(post => {
+            }).then(post => {
                 this.setState({ post: post })
-            })
-            .then(() => {
+            }).then(() => {
                 if (this.state.post.commentCount > 0) this.fetchCommentsForPost(id)
-            })
+            }).catch(error => console.log(error))
     }
 
-    deletePost() {
-        const id = this.props.match.params.id;
-        const url = `${Post.API_URL}/posts/${id}`;
+    onDeleteElement(type,id) {
+        const url = `${Post.API_URL}/${type}/${id}`;
         fetch(url, {
             method: 'DELETE',
             headers: {'Authorization': '*'}
-        })
-            .then(res => {
-                return(res.json())
-            })
-            .then(() => {
+        }).then(res => {
+            return(res.json())
+        }).then(() => {
+            if (type === 'posts') {
                 this.props.history.push("/");
-            })
+            } else {
+                this.fetchCommentsForPost(this.state.post.id);
+            }
+        }).catch(error => console.log(error))
     }
 
-    onEditPost() {
-        this.props.editPost(this.state.post);
+    onEditElement(type) {
+        if (type === 'posts') {
+            this.props.editPost(this.state.post);
+        }
         this.props.show({modalOpen: true});
+    }
+
+    onAddComment() {
+        this.props.show({
+            modalOpen: true,
+            type: 'add-comment',
+            postId: this.state.post.id
+        });
     }
 
     get isPostDetailPage() {
@@ -98,18 +113,25 @@ class Post extends Component {
                         {this.isPostDetailPage && (
                             <span>
                                 <small>•</small>
-                                <small onClick={() => this.onEditPost()} className="actionable edit color--green"> EDIT </small>
+                                <small onClick={() => this.onEditElement('posts', post.id)} className="actionable edit color--green"> EDIT </small>
                                 <small><span>•</span></small>
-                                <small onClick={() => this.deletePost()} className="actionable delete color--red"> DELETE</small>
+                                <small onClick={() => this.onDeleteElement('posts', post.id)} className="actionable delete color--red"> DELETE</small>
                             </span>
                         )}
                     </div>
                 </div>
                 {this.hasComments && comments.map( comment => (
-                    <div key={comment.id} className="post-comment">
-                        <small>{comment.body}</small>
-                    </div>
+                    <Comment key={comment.id}
+                             delete={(type,id) => this.onDeleteElement(type,id)}
+                             edit={(type,id) => this.onEditElement(type)}
+                             isDetailPage={this.isPostDetailPage}
+                             comment={comment}/>
                 ))}
+                {this.isPostDetailPage && (
+                    <div onClick={() => this.onAddComment()} className="post-comment post-comment--cta attached--right">
+                        <small><AddIcon style={{'marginBottom': 3}} size={20}/> ADD COMMENT</small>
+                    </div>
+                )}
             </div>
         );
     }
@@ -121,7 +143,8 @@ function mapStateToProps (state) {
         modalOpen: state.modalReducer.modalOpen,
         editedTitle: state.postReducer.editedTitle,
         editedBody: state.postReducer.editedBody,
-        isInEditMode: state.postReducer.isInEditMode
+        isInEditMode: state.postReducer.isInEditMode,
+        newComment: state.postReducer.newComment
     };
 }
 
@@ -129,7 +152,7 @@ function mapDispatchToProps (dispatch) {
     return {
         editPost: (data,post) => dispatch(editPost(data,post)),
         show: (data) => dispatch(openModal(data)),
-        hide: (data) => dispatch(closeModal(data))
+        hide: (data) => dispatch(closeModal(data)),
     }
 }
 
