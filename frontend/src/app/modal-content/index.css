@@ -1,0 +1,59 @@
+form.add-post input , form.add-post textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    min-height: 30px;
+    outline: none;
+    font-size: 15px;
+}
+form.add-post label {
+    margin-right: 10px;
+}
+
+form.add-post button {
+    padding: 10px 25px;
+    text-transform: uppercase;
+    width:100%;
+    border: 1px solid #00bcd4;
+    background: white;
+    color: #00bcd4;
+    border-radius: 40px;
+    margin: 20px 0;
+    font-size: 15px;
+}
+.modal {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    left: 50%;
+    bottom: 40px;
+    border: 1px solid rgb(204, 204, 204);
+    background: rgb(255, 255, 255);
+    overflow: auto;
+    border-radius: 14px;
+    outline: none;
+    padding: 20px;
+    box-shadow: 0 0 25px 0 rgba(0,0,0,.24);
+    width:75%;
+    max-width: 600px;
+    min-height: 400px;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.75);
+}
+.close-icon {
+    position: absolute;
+    right: 20px;
+    top: 25px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+.close-icon:hover {
+    opacity: 1;
+}

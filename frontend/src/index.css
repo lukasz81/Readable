@@ -9,17 +9,21 @@ body {
 
 .wrapper {
     padding: 0 20px;
+    min-width: 440px;
 }
 
 .post {
     margin: 0 0 10px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px dashed #ddd;
     padding-bottom: 10px;
 }
 .post-info small {
     display: inline-block;
     margin: 0 5px 0 0;
     font-size:13px;
+}
+.post-link:hover p {
+    text-decoration: underline;
 }
 
 .color--red {
@@ -30,6 +34,26 @@ body {
     color: #00bcd4;
 }
 
+.color--blue {
+    color: #2b2eff;
+}
+
+.margin--bottom {
+    margin:0 0 20px 0;
+}
+.readable-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    min-height: 30px;
+    outline: none;
+    font-size: 15px;
+}
+.readable-input::placeholder {
+    color: #ccc;
+}
+
 .actionable {
     text-decoration: underline;
     cursor: pointer;
@@ -37,15 +61,13 @@ body {
 
 p {
     margin: 0;
+    padding: 0 0 5px 0;
 }
 
 small {
     color: #9a9a9a;
 }
 
-.margin--bottom {
-    margin-bottom:20px;
-}
 a {
     text-decoration: none;
     color: #333;

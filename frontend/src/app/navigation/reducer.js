@@ -1,14 +1,14 @@
 import {
-    SHOW_MODAL,
+    OPEN_MODAL,
     CLOSE_MODAL,
     TOGGLE_SORT
 } from "./actions";
 
-let score = true;
+let sortTypeIsscore = true;
 
 function modalReducer(state = {modalOpen: false}, action) {
     switch (action.type) {
-        case SHOW_MODAL :
+        case OPEN_MODAL :
             return {
                 ...state,
                 modalOpen: true
@@ -26,8 +26,8 @@ function modalReducer(state = {modalOpen: false}, action) {
 function toggleSortReducer(state = {sortBy: 'score'}, action) {
     switch (action.type) {
         case TOGGLE_SORT :
-            score = !score;
-            const type = score ? 'score' : 'time';
+            sortTypeIsscore = !sortTypeIsscore;
+            const type = sortTypeIsscore ? 'score' : 'time';
             return {
                 ...state,
                 sortBy: type
@@ -37,4 +37,4 @@ function toggleSortReducer(state = {sortBy: 'score'}, action) {
     }
 }
 
-export { modalReducer, toggleSortReducer }
+export { modalReducer, toggleSortReducer}

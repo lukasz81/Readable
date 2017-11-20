@@ -23,7 +23,7 @@ const defaultData = {
         category: 'redux',
         voteScore: -5,
         deleted: false,
-        commentCount: 3
+        commentCount: 0
     },
     "6ni6ok3ym7mf1p33lneuda": {
         id: '6ni6ok3ym7mf1p33lneuda',

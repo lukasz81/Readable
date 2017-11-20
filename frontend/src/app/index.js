@@ -1,15 +1,19 @@
 import React, {Component} from 'react';
 import {Route, Switch} from 'react-router';
-import {BrowserRouter} from 'react-router-dom';
+import {Router} from 'react-router-dom';
 import Navigation from './navigation';
 import Posts from './posts';
 import Post from './posts/post';
 import Modal from 'react-modal';
 import CancelIcon from 'react-icons/lib/md/cancel'
 import './index.css';
-import {showModal,closeModal} from "./navigation/actions";
+import {openModal,closeModal} from "./navigation/actions";
+import {addPost} from "./posts/post/actions";
 import {connect} from "react-redux";
-import AddPost from "./add-post-form/index";
+import ModalContent from "./modal-content/index";
+import createBrowserHistory from 'history/createBrowserHistory';
+
+const history = createBrowserHistory();
 
 class App extends Component {
 
@@ -17,13 +21,14 @@ class App extends Component {
         this.props.hide({modalOpen: false})
     }
     onShowModal() {
+        this.props.addPost();
         this.props.show({modalOpen: true})
     }
 
     render() {
         const {store} = this.props;
         return (
-            <BrowserRouter>
+            <Router history={history}>
                 <div className='wrapper'>
                     <Route render={props => (
                         <Navigation emitOnShowModal={() => this.onShowModal()}
@@ -42,12 +47,11 @@ class App extends Component {
                         overlayClassName='overlay'
                         isOpen={this.props.modalOpen}
                         contentLabel='Modal'>
-                        <h3 className='margin--bottom'>Add a new post</h3>
                         <CancelIcon onClick={() => this.onHideModal()} className="close-icon"/>
-                        <AddPost/>
+                        <ModalContent/>
                     </Modal>
                 </div>
-            </BrowserRouter>
+            </Router>
         );
     }
 }
@@ -61,7 +65,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        show: (data) => dispatch(showModal(data)),
+        addPost: () => dispatch(addPost()),
+        show: (data) => dispatch(openModal(data)),
         hide: (data) => dispatch(closeModal(data))
     }
 }

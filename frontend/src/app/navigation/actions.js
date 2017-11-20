@@ -1,10 +1,10 @@
-export const SHOW_MODAL = 'SHOW_MODAL';
 export const CLOSE_MODAL = 'CLOSE_MODAL';
+export const OPEN_MODAL = 'OPEN_MODAL';
 export const TOGGLE_SORT = 'TOGGLE_SORT';
 
-export function showModal (value) {
+export function openModal (value) {
     return {
-        type: 'SHOW_MODAL',
+        type: 'OPEN_MODAL',
         value
     };
 }

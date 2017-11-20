@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import Moment from 'react-moment';
 import {Link} from 'react-router-dom';
+import {closeModal,openModal} from "../../navigation/actions";
+import {editPost} from "./actions";
+import {connect} from "react-redux";
 import './index.css';
 
 class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            post: '',
+            post: [],
             comments: []
         };
     }
@@ -42,9 +45,28 @@ class Post extends Component {
                 this.setState({ post: post })
             })
             .then(() => {
-                const {commentCount} = this.state.post;
-                if (commentCount > 0) this.fetchCommentsForPost(id)
+                if (this.state.post.commentCount > 0) this.fetchCommentsForPost(id)
             })
+    }
+
+    deletePost() {
+        const id = this.props.match.params.id;
+        const url = `${Post.API_URL}/posts/${id}`;
+        fetch(url, {
+            method: 'DELETE',
+            headers: {'Authorization': '*'}
+        })
+            .then(res => {
+                return(res.json())
+            })
+            .then(() => {
+                this.props.history.push("/");
+            })
+    }
+
+    onEditPost() {
+        this.props.editPost(this.state.post);
+        this.props.show({modalOpen: true});
     }
 
     get isPostDetailPage() {
@@ -58,24 +80,29 @@ class Post extends Component {
     render() {
         const {post} = this.isPostDetailPage ? this.state : this.props;
         const {comments} = this.state;
-        console.log(this.state);
+        const {editedTitle,editedBody,isInEditMode} = this.isPostDetailPage ? this.props : {};
         return (
             <div>
-                <div className="post" key={post.id}>
+                <div className={this.isPostDetailPage ? 'post-detail' : 'post'} key={post.id}>
                     <Link to={`/${post.category}/${post.id}`}>
                         <div className="post-link">
-                            <p>{post.title}</p>
-                            <small>{post.body}</small>
+                            <p>{editedTitle && isInEditMode ? editedTitle : post.title}</p>
+                            <small>{editedBody && isInEditMode ? editedBody : post.body}</small>
                         </div>
                     </Link>
                     <div className="post-info">
                         <small>{`Score: ${post.voteScore} `}<span>•</span></small>
                         <small>{`Author: ${post.author} `}<span>•</span></small>
                         <small>{`Comments: ${post.commentCount} `}<span>•</span></small>
-                        <small>Created: <Moment fromNow>{post.timestamp}</Moment> <span>•</span></small>
-                        <small className="actionable edit color--green"> EDIT </small>
-                        <small><span>•</span></small>
-                        <small className="actionable delete color--red"> DELETE</small>
+                        <small>Created: <Moment fromNow>{post.timestamp}</Moment></small>
+                        {this.isPostDetailPage && (
+                            <span>
+                                <small>•</small>
+                                <small onClick={() => this.onEditPost()} className="actionable edit color--green"> EDIT </small>
+                                <small><span>•</span></small>
+                                <small onClick={() => this.deletePost()} className="actionable delete color--red"> DELETE</small>
+                            </span>
+                        )}
                     </div>
                 </div>
                 {this.hasComments && comments.map( comment => (
@@ -88,4 +115,22 @@ class Post extends Component {
     }
 }
 
-export default Post;
+function mapStateToProps (state) {
+    return {
+        state,
+        modalOpen: state.modalReducer.modalOpen,
+        editedTitle: state.postReducer.editedTitle,
+        editedBody: state.postReducer.editedBody,
+        isInEditMode: state.postReducer.isInEditMode
+    };
+}
+
+function mapDispatchToProps (dispatch) {
+    return {
+        editPost: (data,post) => dispatch(editPost(data,post)),
+        show: (data) => dispatch(openModal(data)),
+        hide: (data) => dispatch(closeModal(data))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Post);
