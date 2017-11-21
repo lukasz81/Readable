@@ -43,6 +43,14 @@ body {
     color: #2b2eff;
 }
 
+.color--silver {
+    color: #9a9a9a;
+}
+
+.color--silver-light {
+    color: #717171;
+}
+
 .margin--bottom {
     margin:0 0 20px 0;
 }
@@ -67,10 +75,6 @@ body {
 p {
     margin: 0;
     padding: 0 0 5px 0;
-}
-
-small {
-    color: #9a9a9a;
 }
 
 a {

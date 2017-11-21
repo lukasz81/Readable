@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import {closeModal,openModal} from "../../shared-modal-content/actions";
 import {editPost} from "./actions";
 import {Comment} from "./comment"
+import {ActionsPanel} from "./actions-ui-panel/index";
 import {connect} from "react-redux";
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import './index.css';
@@ -106,30 +107,28 @@ class Post extends Component {
                     <Link to={`/${post.category}/${post.id}`}>
                         <div className="post-link">
                             <p>{editedTitle && isInEditMode ? editedTitle : post.title}</p>
-                            <small>{editedBody && isInEditMode ? editedBody : post.body}</small>
+                            <small className="color--silver">{editedBody && isInEditMode ? editedBody : post.body}</small>
                         </div>
                     </Link>
-                    <div className="post-info">
-                        <small>{`Score: ${post.voteScore} `}<span>•</span></small>
-                        <small>{`Author: ${post.author} `}<span>•</span></small>
-                        <small>{`Comments: ${post.commentCount} `}<span>•</span></small>
-                        <small>Created: <Moment fromNow>{post.timestamp}</Moment></small>
-                        {this.isPostDetailPage && (
-                            <span>
-                                <small>•</small>
-                                <small onClick={() => this.onEditElement('posts', post)} className="actionable edit color--green"> EDIT </small>
-                                <small><span>•</span></small>
-                                <small onClick={() => this.onDeleteElement('posts', post.id)} className="actionable delete color--red"> DELETE</small>
-                            </span>
-                        )}
-                    </div>
+
+                    <ActionsPanel key={post.id}
+                                  delete={(type,id) => this.onDeleteElement(type,id)}
+                                  edit={(type,element) => this.onEditElement(type,element)}
+                                  isDetailPage={this.isPostDetailPage}
+                                  element={post}/>
+
                 </div>
-                {this.hasComments && comments.map( comment => (
-                    <Comment key={comment.id}
-                             delete={(type,id) => this.onDeleteElement(type,id)}
-                             edit={(type,comment) => this.onEditElement(type,comment)}
-                             isDetailPage={this.isPostDetailPage}
-                             comment={comment}/>
+                {this.hasComments && comments.map( element => (
+                    <div className="post-comment attached--left">
+                        <small>{element.body}</small>
+
+                        <ActionsPanel key={element.id}
+                                 delete={(type,id) => this.onDeleteElement(type,id)}
+                                 edit={(type,element) => this.onEditElement(type,element)}
+                                 isDetailPage={this.isPostDetailPage}
+                                 element={element}/>
+
+                    </div>
                 ))}
                 {this.isPostDetailPage && (
                     <div onClick={() => this.onAddComment()} className="post-comment post-comment--cta attached--right">
