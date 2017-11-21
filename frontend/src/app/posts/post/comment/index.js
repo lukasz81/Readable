@@ -15,7 +15,7 @@ class Comment extends Component {
                     {isDetailPage && (
                         <span>
                             <small>•</small>
-                            <small onClick={() => this.props.edit('comments', comment.id)} className="actionable edit"> EDIT </small>
+                            <small onClick={() => this.props.edit('comments', comment)} className="actionable edit"> EDIT </small>
                             <small><span>•</span></small>
                             <small onClick={() => this.props.delete('comments', comment.id)} className="actionable delete"> DELETE</small>
                         </span>

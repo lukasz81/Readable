@@ -13,7 +13,9 @@ function modalReducer(state = {
                 ...state,
                 modalOpen: true,
                 actionType: action.value.type,
-                parentId: action.value.postId
+                parentId: action.value.postId,
+                commentBody: action.value.commentBody,
+                commentId: action.value.commentId
             };
         case CLOSE_MODAL :
             return {

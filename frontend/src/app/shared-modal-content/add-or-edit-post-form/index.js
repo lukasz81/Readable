@@ -15,6 +15,7 @@ class AddOrEditPostForm extends Component {
             header: isInEditMode ? 'Edit post' : 'Add a new post',
             button: isInEditMode ? 'Save changes' : 'Submit'
         };
+
         return (
             <div>
             <h3 className='color--green margin--bottom'>{labels.header}</h3>

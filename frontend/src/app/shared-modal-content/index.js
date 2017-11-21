@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {storePosts} from "../posts/actions";
 import {addComment} from "../posts/post/actions";
 import {AddOrEditPostForm} from './add-or-edit-post-form';
-import {AddPostCommentForm} from './add-post-comment-form'
+import {AddOrEditCommentForm} from './add-or-edit-comment-form'
 import './index.css';
 
 class ModalContent extends Component {
@@ -28,10 +28,11 @@ class ModalContent extends Component {
     }
 
     componentWillMount() {
-        const {isInEditMode,postTitle,postBody} = this.props;
+        const {isInEditMode,postTitle,postBody,action,commentBody} = this.props;
+        const bodyToShow = action === 'edit-post' ? postBody : commentBody;
         this.setState({
             title: isInEditMode ? postTitle : '',
-            body: isInEditMode ? postBody : ''
+            body: bodyToShow
         })
     }
 
@@ -57,10 +58,11 @@ class ModalContent extends Component {
         const post = this.state;
         if (this.checkIfFormIsValid(post) && !this.props.isInEditMode) {
             this.addPost(post);
-        } else if (this.props.isInEditMode) {
+        } else if (this.props.action === 'edit-comment') {
+            this.editComment()
+        } else if (this.props.action === 'edit-post') {
             this.editPost();
         } else if (this.props.action === 'add-comment') {
-            console.log(this.props);
             const comment = {
               id: this.state.id,
               timestamp: this.state.timestamp,
@@ -128,22 +130,39 @@ class ModalContent extends Component {
         }).catch(error => {console.log(error)})
     }
 
+    editComment() {
+        const url = `${process.env.REACT_APP_BACKEND}/comments/${this.props.commentId}`;
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': '*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                timestamp: Date.now(),
+                body: this.state.body
+            })
+        }).then(() => {
+            this.props.hide({modalOpen: false})
+        }).catch(error => {console.log(error)})
+    }
+
     render() {
         const {action} = this.props;
         return (
             <div>
-                {action !== 'add-comment' ? (
-                    <AddOrEditPostForm
+                {action === 'add-comment' || action === 'edit-comment'  ? (
+                    <AddOrEditCommentForm
                         handleSubmit={this.handleSubmit}
                         handleInputChange={this.handleInputChange}
                         {...this.state}
                         {...this.props} />
                 ) : (
-                    <AddPostCommentForm
-                        handleSubmit={this.handleSubmit}
-                        handleInputChange={this.handleInputChange}
-                        {...this.state}
-                        {...this.props} />
+                    <AddOrEditPostForm
+                    handleSubmit={this.handleSubmit}
+                    handleInputChange={this.handleInputChange}
+                    {...this.state}
+                    {...this.props} />
                 )}
             </div>
         );
@@ -158,6 +177,8 @@ function mapStateToProps (state) {
         postBody: state.postReducer.postBody,
         id: state.postReducer.id || state.modalReducer.parentId,
         action: state.modalReducer.actionType,
+        commentBody: state.modalReducer.commentBody,
+        commentId: state.modalReducer.commentId
     };
 }
 

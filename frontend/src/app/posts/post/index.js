@@ -26,8 +26,8 @@ class Post extends Component {
         }
     }
 
-    componentWillReceiveProps() {
-        if (this.props.newComment) this.fetchCommentsForPost(this.state.post.id)
+    componentWillReceiveProps(newProps) {
+        if (!newProps.modalOpen) this.fetchCommentsForPost(this.state.post.id)
     }
 
     fetchCommentsForPost(id) {
@@ -69,11 +69,15 @@ class Post extends Component {
         }).catch(error => console.log(error))
     }
 
-    onEditElement(type) {
-        if (type === 'posts') {
-            this.props.editPost(this.state.post);
-        }
-        this.props.show({modalOpen: true});
+    onEditElement(type,element) {
+        if (type === 'posts') this.props.editPost(this.state.post);
+        this.props.show({
+            modalOpen: true,
+            type: type === 'posts' ? 'edit-post' : 'edit-comment',
+            postId: this.state.post.id,
+            commentId: element.id,
+            commentBody: element.body
+        });
     }
 
     onAddComment() {
@@ -113,7 +117,7 @@ class Post extends Component {
                         {this.isPostDetailPage && (
                             <span>
                                 <small>•</small>
-                                <small onClick={() => this.onEditElement('posts', post.id)} className="actionable edit color--green"> EDIT </small>
+                                <small onClick={() => this.onEditElement('posts', post)} className="actionable edit color--green"> EDIT </small>
                                 <small><span>•</span></small>
                                 <small onClick={() => this.onDeleteElement('posts', post.id)} className="actionable delete color--red"> DELETE</small>
                             </span>
@@ -123,7 +127,7 @@ class Post extends Component {
                 {this.hasComments && comments.map( comment => (
                     <Comment key={comment.id}
                              delete={(type,id) => this.onDeleteElement(type,id)}
-                             edit={(type,id) => this.onEditElement(type)}
+                             edit={(type,comment) => this.onEditElement(type,comment)}
                              isDetailPage={this.isPostDetailPage}
                              comment={comment}/>
                 ))}
