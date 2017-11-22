@@ -24,9 +24,8 @@ class Posts extends Component {
         fetch(url, {headers: {'Authorization': '*'}})
             .then(res => {
                 return ( res.json() )
-            })
-            .then(posts => {
-                this.props.storeFetchedPosts(this.compareFunction(posts,'score'))
+            }).then(posts => {
+                this.props.storeFetchedPosts(this.compareFunction(posts,'score'));
             });
     }
 

@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {closeModal} from "./actions";
-import {savePost} from "../posts/post/actions";
+import {addPost,addComments} from "../posts/post/actions";
 import {connect} from "react-redux";
 import {storePosts} from "../posts/actions";
-import {addComment} from "../posts/post/actions";
 import {AddOrEditPostForm} from './add-or-edit-post-form';
 import {AddOrEditCommentForm} from './add-or-edit-comment-form'
 import './index.css';
@@ -28,11 +27,10 @@ class ModalContent extends Component {
     }
 
     componentWillMount() {
-        const {isInEditMode,postTitle,postBody,action,commentBody} = this.props;
-        const bodyToShow = action === 'edit-post' ? postBody : commentBody;
+        const {postTitle,postBody,action,commentBody} = this.props;
         this.setState({
-            title: isInEditMode ? postTitle : '',
-            body: bodyToShow
+            title: action === 'edit-post' ? postTitle : '',
+            body: action === 'edit-post' ? postBody : commentBody
         })
     }
 
@@ -56,7 +54,7 @@ class ModalContent extends Component {
     handleSubmit(event) {
         event.preventDefault();
         const post = this.state;
-        if (this.checkIfFormIsValid(post) && !this.props.isInEditMode) {
+        if (this.checkIfFormIsValid(post) && !this.props.action) {
             this.addPost(post);
         } else if (this.props.action === 'edit-comment') {
             this.editComment()
@@ -104,7 +102,9 @@ class ModalContent extends Component {
             },
             body: JSON.stringify(comment)
         }).then(() => {
-            this.props.addComment(comment);
+            const comments = this.props.comments;
+            const addedComments = comments.concat(comment);
+            this.props.addComments(addedComments);
             this.props.hide({modalOpen: false});
         }).catch(error => {console.log(error)})
     }
@@ -122,7 +122,7 @@ class ModalContent extends Component {
                 body: this.state.body
             })
         }).then(() => {
-            this.props.savePost({
+            this.props.addPost({
                 title: this.state.title,
                 body: this.state.body
             });
@@ -151,7 +151,7 @@ class ModalContent extends Component {
         const {action} = this.props;
         return (
             <div>
-                {action === 'add-comment' || action === 'edit-comment'  ? (
+                {action === 'add-comment' || action === 'edit-comment' ? (
                     <AddOrEditCommentForm
                         handleSubmit={this.handleSubmit}
                         handleInputChange={this.handleInputChange}
@@ -178,7 +178,9 @@ function mapStateToProps (state) {
         id: state.postReducer.id || state.modalReducer.parentId,
         action: state.modalReducer.actionType,
         commentBody: state.modalReducer.commentBody,
-        commentId: state.modalReducer.commentId
+        commentId: state.modalReducer.commentId,
+        comments: state.postReducer.comments,
+        post: state.postReducer.post
     };
 }
 
@@ -186,8 +188,8 @@ function mapDispatchToProps (dispatch) {
     return {
         hide: (data) => dispatch(closeModal(data)),
         addPosts: (data) => dispatch(storePosts(data)),
-        savePost: (data) => dispatch(savePost(data)),
-        addComment: (data) => dispatch(addComment(data))
+        addPost: (post) => dispatch(addPost(post)),
+        addComments: (comments) => dispatch(addComments(comments))
     }
 }
 

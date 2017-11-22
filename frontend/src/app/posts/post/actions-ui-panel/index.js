@@ -4,7 +4,7 @@ import Moment from 'react-moment';
 class ActionsPanel extends Component {
 
     render() {
-        const {element, isDetailPage} = this.props;
+        const {element, type, isDetailPage} = this.props;
         return (
             <div className="post-info">
                 <small className="color--silver-light">{`Score: ${element.voteScore} `}<span>•</span></small>
@@ -16,13 +16,13 @@ class ActionsPanel extends Component {
                 {isDetailPage && (
                     <span>
                         <br/>
-                        <small onClick={() => this.props.edit('comments', element)} className="actionable edit color--green"> EDIT </small>
+                        <small onClick={() => this.props.edit(type, element)} className="actionable edit color--green"> EDIT </small>
                         <small><span>•</span></small>
-                        <small onClick={() => this.props.delete('comments', element.id)} className="actionable delete color--red"> DELETE</small>
+                        <small onClick={() => this.props.delete(type, element.id)} className="actionable delete color--red"> DELETE</small>
                         <small><span>•</span></small>
-                        <small className="actionable delete color--green"> UPVOTE</small>
+                        <small onClick={() => this.props.onvote(type, element.id, 'upVote')} className="actionable delete color--green"> UPVOTE</small>
                         <small><span>•</span></small>
-                        <small className="actionable delete color--red"> DOWNVOTE</small>
+                        <small onClick={() => this.props.onvote(type, element.id, 'downVote')} className="actionable delete color--red"> DOWNVOTE</small>
                     </span>
                 )}
             </div>

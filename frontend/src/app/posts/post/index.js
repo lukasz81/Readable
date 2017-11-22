@@ -1,34 +1,21 @@
-import React, { Component } from 'react';
-import Moment from 'react-moment';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {closeModal,openModal} from "../../shared-modal-content/actions";
-import {editPost} from "./actions";
-import {Comment} from "./comment"
+import {closeModal, openModal} from "../../shared-modal-content/actions";
+import {editPost, addPost,addComments} from "./actions";
 import {ActionsPanel} from "./actions-ui-panel/index";
 import {connect} from "react-redux";
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import './index.css';
 
 class Post extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            post: [],
-            comments: []
-        };
-    }
 
     static API_URL = process.env.REACT_APP_BACKEND;
 
     componentWillMount() {
         if (this.isPostDetailPage) {
             const id = this.props.match.params.id;
-            this.fetchPostAndSaveInState(id);
+            this.fetchPostAndSaveInStore(id);
         }
-    }
-
-    componentWillReceiveProps(newProps) {
-        if (!newProps.modalOpen) this.fetchCommentsForPost(this.state.post.id)
     }
 
     fetchCommentsForPost(id) {
@@ -38,54 +25,71 @@ class Post extends Component {
                 return ( res.json() )
             })
             .then(comments => {
-                this.setState({ comments: comments })
+                this.props.addComments(comments)
             });
     }
 
-    fetchPostAndSaveInState(id) {
+    fetchPostAndSaveInStore(id) {
         const url = `${Post.API_URL}/posts/${id}`;
         fetch(url, {headers: {'Authorization': '*'}})
             .then(res => {
                 return ( res.json() )
             }).then(post => {
-                this.setState({ post: post })
-            }).then(() => {
-                if (this.state.post.commentCount > 0) this.fetchCommentsForPost(id)
-            }).catch(error => console.log(error))
+            this.props.addPost(post);
+        }).then(() => {
+            if (this.isPostDetailPage) this.fetchCommentsForPost(id)
+        }).catch(error => console.error(error))
     }
 
-    onDeleteElement(type,id) {
+    onDeleteElement(type, id) {
         const url = `${Post.API_URL}/${type}/${id}`;
         fetch(url, {
             method: 'DELETE',
             headers: {'Authorization': '*'}
         }).then(res => {
-            return(res.json())
+            return (res.json())
         }).then(() => {
             if (type === 'posts') {
                 this.props.history.push("/");
             } else {
-                this.fetchCommentsForPost(this.state.post.id);
+                this.fetchCommentsForPost(this.props.singlePost.id);
             }
         }).catch(error => console.log(error))
     }
 
-    onEditElement(type,element) {
-        if (type === 'posts') this.props.editPost(this.state.post);
+    onEditElement(type, element) {
+        if (type === 'posts') this.props.editPost(this.props.singlePost);
         this.props.show({
             modalOpen: true,
             type: type === 'posts' ? 'edit-post' : 'edit-comment',
-            postId: this.state.post.id,
+            postId: this.props.singlePost.id,
             commentId: element.id,
             commentBody: element.body
         });
+    }
+
+    onVote(type, id, action) {
+        const url = `${Post.API_URL}/${type}/${id}`;
+        fetch(url, {
+            headers: {
+                'Authorization': '*',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({option: action.toString()})
+        }).then(res => {
+            return (res.json())
+        }).then(response => {
+            const ID = type === 'posts' ? id : response.parentId;
+            this.fetchPostAndSaveInStore(ID)
+        }).catch(error => console.log(error))
     }
 
     onAddComment() {
         this.props.show({
             modalOpen: true,
             type: 'add-comment',
-            postId: this.state.post.id
+            postId: this.props.singlePost.id
         });
     }
 
@@ -93,67 +97,74 @@ class Post extends Component {
         return this.props.hasOwnProperty('match') && this.props.match.path === '/:category/:id'
     }
 
-    get hasComments() {
-        return this.state.post.commentCount > 0;
-    }
-
     render() {
-        const {post} = this.isPostDetailPage ? this.state : this.props;
-        const {comments} = this.state;
-        const {editedTitle,editedBody,isInEditMode} = this.isPostDetailPage ? this.props : {};
+        const {comments} = this.props;
+        const post = this.isPostDetailPage ? this.props.singlePost : this.props.post;
+        const {editedTitle, editedBody, isInEditMode} = this.isPostDetailPage ? this.props : {};
         return (
             <div>
-                <div className={this.isPostDetailPage ? 'post-detail' : 'post'} key={post.id}>
-                    <Link to={`/${post.category}/${post.id}`}>
-                        <div className="post-link">
-                            <p>{editedTitle && isInEditMode ? editedTitle : post.title}</p>
-                            <small className="color--silver">{editedBody && isInEditMode ? editedBody : post.body}</small>
+                {post !== undefined && (
+                    <div>
+                        <div className={this.isPostDetailPage ? 'post-detail' : 'post'} key={post.id}>
+                            <Link to={`/${post.category}/${post.id}`}>
+                                <div className="post-link">
+                                    <p>{editedTitle && isInEditMode ? editedTitle : post.title}</p>
+                                    <small
+                                        className="color--silver">{editedBody && isInEditMode ? editedBody : post.body}</small>
+                                </div>
+                            </Link>
+
+                            <ActionsPanel delete={(type, id) => this.onDeleteElement(type, id)}
+                                          edit={(type, element) => this.onEditElement(type, element)}
+                                          onvote={(type, id, action) => this.onVote(type, id, action)}
+                                          isDetailPage={this.isPostDetailPage}
+                                          type={'posts'}
+                                          element={post}/>
+
                         </div>
-                    </Link>
+                        {(this.isPostDetailPage && comments !== undefined) && comments.map(comment => (
+                            <div key={comment.id} className="post-comment attached--left">
+                                <small className="color--silver">{comment.body}</small>
 
-                    <ActionsPanel key={post.id}
-                                  delete={(type,id) => this.onDeleteElement(type,id)}
-                                  edit={(type,element) => this.onEditElement(type,element)}
-                                  isDetailPage={this.isPostDetailPage}
-                                  element={post}/>
-
-                </div>
-                {this.hasComments && comments.map( element => (
-                    <div className="post-comment attached--left">
-                        <small>{element.body}</small>
-
-                        <ActionsPanel key={element.id}
-                                 delete={(type,id) => this.onDeleteElement(type,id)}
-                                 edit={(type,element) => this.onEditElement(type,element)}
-                                 isDetailPage={this.isPostDetailPage}
-                                 element={element}/>
-
-                    </div>
-                ))}
-                {this.isPostDetailPage && (
-                    <div onClick={() => this.onAddComment()} className="post-comment post-comment--cta attached--right">
-                        <small><AddIcon style={{'marginBottom': 3}} size={20}/> ADD COMMENT</small>
+                                <ActionsPanel
+                                    delete={(type, id) => this.onDeleteElement(type, id)}
+                                    edit={(type, element) => this.onEditElement(type, element)}
+                                    onvote={(type, id, action) => this.onVote(type, id, action)}
+                                    isDetailPage={this.isPostDetailPage}
+                                    type={'comments'}
+                                    element={comment}/>
+                            </div>
+                        ))}
+                        {this.isPostDetailPage && (
+                            <div onClick={() => this.onAddComment()}
+                                 className="post-comment post-comment--cta attached--right">
+                                <small><AddIcon style={{'marginBottom': 3}} size={20}/> ADD COMMENT</small>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
-        );
+        )
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
-        state,
         modalOpen: state.modalReducer.modalOpen,
         editedTitle: state.postReducer.editedTitle,
         editedBody: state.postReducer.editedBody,
         isInEditMode: state.postReducer.isInEditMode,
-        newComment: state.postReducer.newComment
+        newComment: state.postReducer.newComment,
+        singlePost: state.postReducer.post,
+        comments: state.postReducer.comments
     };
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
     return {
-        editPost: (data,post) => dispatch(editPost(data,post)),
+        editPost: (data, post) => dispatch(editPost(data, post)),
+        addPost: (post) => dispatch(addPost(post)),
+        addComments: (comments) => dispatch(addComments(comments)),
         show: (data) => dispatch(openModal(data)),
         hide: (data) => dispatch(closeModal(data)),
     }

@@ -8,7 +8,7 @@ body {
 }
 
 .wrapper {
-    padding: 10px 20px;
+    padding: 10px 20px 100px;
     min-width: 440px;
     max-width: 600px;
     min-height: 100vh;

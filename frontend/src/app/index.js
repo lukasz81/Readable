@@ -6,9 +6,7 @@ import Posts from './posts';
 import Post from './posts/post';
 import Modal from 'react-modal';
 import CancelIcon from 'react-icons/lib/md/cancel'
-import './index.css';
 import {openModal,closeModal} from "./shared-modal-content/actions";
-import {addPost} from "./posts/post/actions";
 import {connect} from "react-redux";
 import ModalContent from "./shared-modal-content/index";
 import createBrowserHistory from 'history/createBrowserHistory';
@@ -21,7 +19,6 @@ class App extends Component {
         this.props.hide({modalOpen: false})
     }
     onShowModal() {
-        this.props.addPost();
         this.props.show({modalOpen: true})
     }
 
@@ -65,7 +62,6 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        addPost: () => dispatch(addPost()),
         show: (data) => dispatch(openModal(data)),
         hide: (data) => dispatch(closeModal(data))
     }

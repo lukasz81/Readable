@@ -1,9 +1,7 @@
 import {
     ADD_POST,
+    ADD_COMMENTS,
     EDIT_POST,
-    SAVE_POST,
-    ADD_COMMENT,
-    EDIT_COMMENT
 } from "./actions";
 
 function postReducer(state = { isInEditMode: false }, action) {
@@ -13,7 +11,13 @@ function postReducer(state = { isInEditMode: false }, action) {
                 ...state,
                 isInEditMode: false,
                 editedTitle: null,
-                editedBody: null
+                editedBody: null,
+                post: action.post
+            };
+        case ADD_COMMENTS :
+            return {
+                ...state,
+                comments: action.comments
             };
         case EDIT_POST :
             return {
@@ -24,28 +28,6 @@ function postReducer(state = { isInEditMode: false }, action) {
                 id: action.post.id,
                 editedTitle: null,
                 editedBody: null
-            };
-        case SAVE_POST :
-            return {
-                ...state,
-                editedTitle: action.data.title,
-                editedBody: action.data.body,
-            };
-        case ADD_COMMENT :
-            return {
-                ...state,
-                newComment: {
-                    id: action.comment.id,
-                    timestamp: action.comment.timestamp,
-                    body: action.comment.body,
-                    author: action.comment.author,
-                    parentId: action.comment.parentId
-                }
-            };
-        case EDIT_COMMENT :
-            return {
-                ...state,
-                editedBody: action.data.body
             };
         default :
             return state

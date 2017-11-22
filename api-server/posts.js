@@ -24,21 +24,10 @@ const defaultData = {
         voteScore: -5,
         deleted: false,
         commentCount: 0
-    },
-    "6ni6ok3ym7mf1p33lneuda": {
-        id: '6ni6ok3ym7mf1p33lneuda',
-        timestamp: 1468979767190,
-        title: 'Udacity or not ?',
-        body: 'Just kidding. It takes more than 10 minutes to learn technology.',
-        author: 'lukasz',
-        category: 'udacity',
-        voteScore: 5,
-        deleted: false,
-        commentCount: 0
     }
 }
 
-function getData(token) {
+function getData (token) {
     let data = db[token]
     if (data == null) {
         data = db[token] = clone(defaultData)
@@ -46,7 +35,7 @@ function getData(token) {
     return data
 }
 
-function getByCategory(token, category) {
+function getByCategory (token, category) {
     return new Promise((res) => {
         let posts = getData(token)
         let keys = Object.keys(posts)
@@ -55,7 +44,7 @@ function getByCategory(token, category) {
     })
 }
 
-function get(token, id) {
+function get (token, id) {
     return new Promise((res) => {
         const posts = getData(token)
         res(
@@ -66,7 +55,7 @@ function get(token, id) {
     })
 }
 
-function getAll(token) {
+function getAll (token) {
     return new Promise((res) => {
         const posts = getData(token)
         let keys = Object.keys(posts)
@@ -75,7 +64,7 @@ function getAll(token) {
     })
 }
 
-function add(token, post) {
+function add (token, post) {
     return new Promise((res) => {
         let posts = getData(token)
 
@@ -95,11 +84,11 @@ function add(token, post) {
     })
 }
 
-function vote(token, id, option) {
+function vote (token, id, option) {
     return new Promise((res) => {
         let posts = getData(token)
         post = posts[id]
-        switch (option) {
+        switch(option) {
             case "upVote":
                 post.voteScore = post.voteScore + 1
                 break
@@ -113,7 +102,7 @@ function vote(token, id, option) {
     })
 }
 
-function disable(token, id) {
+function disable (token, id) {
     return new Promise((res) => {
         let posts = getData(token)
         posts[id].deleted = true
@@ -121,7 +110,7 @@ function disable(token, id) {
     })
 }
 
-function edit(token, id, post) {
+function edit (token, id, post) {
     return new Promise((res) => {
         let posts = getData(token)
         for (prop in post) {

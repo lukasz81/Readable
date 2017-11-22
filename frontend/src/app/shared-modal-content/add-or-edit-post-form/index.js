@@ -4,7 +4,7 @@ class AddOrEditPostForm extends Component {
 
     render() {
         const {
-            isInEditMode,
+            action,
             handleSubmit,
             handleInputChange,
             title,
@@ -12,11 +12,12 @@ class AddOrEditPostForm extends Component {
             author,
             category } = this.props;
         const labels = {
-            header: isInEditMode ? 'Edit post' : 'Add a new post',
-            button: isInEditMode ? 'Save changes' : 'Submit'
+            header: action === 'edit-post' ? 'Edit post' : 'Add a new post',
+            button: action === 'edit-post' ? 'Save changes' : 'Submit'
         };
 
         return (
+
             <div>
             <h3 className='color--green margin--bottom'>{labels.header}</h3>
             <form onSubmit={handleSubmit} className='add-post'>
@@ -42,7 +43,7 @@ class AddOrEditPostForm extends Component {
                         onChange={handleInputChange}/>
                 </label>
                 <br/>
-                {!isInEditMode && (
+                {action !== 'edit-post' && (
                     <div>
                         <label>
                             <small>Author:</small>
