@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {closeModal} from "./actions";
-import {addPost,addComments} from "../posts/post/actions";
+import {fetchPost,addComments} from "../posts/post/actions";
 import {connect} from "react-redux";
-import {storePosts} from "../posts/actions";
+import {addToPosts} from "../posts/actions";
 import {AddOrEditPostForm} from './add-or-edit-post-form';
 import {AddOrEditCommentForm} from './add-or-edit-comment-form'
 import './index.css';
@@ -55,7 +55,7 @@ class ModalContent extends Component {
         event.preventDefault();
         const post = this.state;
         if (this.checkIfFormIsValid(post) && !this.props.action) {
-            this.addPost(post);
+            this.fetchPost(post);
         } else if (this.props.action === 'edit-comment') {
             this.editComment()
         } else if (this.props.action === 'edit-post') {
@@ -75,9 +75,8 @@ class ModalContent extends Component {
 
     }
 
-    addPost(post) {
+    fetchPost(post) {
         const url = `${process.env.REACT_APP_BACKEND}/posts`;
-        const {sort,posts} = this.props;
         fetch(url, {
             method:'POST',
             headers: {
@@ -85,9 +84,10 @@ class ModalContent extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(post)
-        }).then(() => {
-            const contentToAdd = posts ? posts.concat(post) : [post];
-            this.props.addPosts(contentToAdd,sort);
+        }).then(res => {
+            return (res.json())
+        }).then(post => {
+            this.props.addToPosts(post);
             this.props.hide({modalOpen: false});
         }).catch(error => {console.log(error)})
     }
@@ -122,7 +122,7 @@ class ModalContent extends Component {
                 body: this.state.body
             })
         }).then(() => {
-            this.props.addPost({
+            this.props.fetchPost({
                 title: this.state.title,
                 body: this.state.body
             });
@@ -170,7 +170,7 @@ class ModalContent extends Component {
 }
 function mapStateToProps (state) {
     return {
-        sort: state.toggleSortReducer.sortBy,
+        sort: state.postsReducer.sortBy,
         posts: state.postsReducer.posts,
         isInEditMode: state.postReducer.isInEditMode,
         postTitle: state.postReducer.postTitle,
@@ -187,8 +187,8 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
     return {
         hide: (data) => dispatch(closeModal(data)),
-        addPosts: (data) => dispatch(storePosts(data)),
-        addPost: (post) => dispatch(addPost(post)),
+        addToPosts: (post) => dispatch(addToPosts(post)),
+        fetchPost: (post) => dispatch(fetchPost(post)),
         addComments: (comments) => dispatch(addComments(comments))
     }
 }

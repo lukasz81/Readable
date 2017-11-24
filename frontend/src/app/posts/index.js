@@ -25,20 +25,13 @@ class Posts extends Component {
             .then(res => {
                 return ( res.json() )
             }).then(posts => {
-                this.props.storeFetchedPosts(this.compareFunction(posts,'score'));
+            this.props.storePosts(posts,'score');
             });
-    }
-
-    compareFunction(elements,sort) {
-        return elements.sort((a,b) => {
-            return sort === 'score' ? b.voteScore - a.voteScore : b.timestamp - a.timestamp
-        })
     }
 
     render() {
         const {category} = this.state;
-        const {sortBy} = this.props;
-        const posts = this.props.posts ? this.compareFunction(this.props.posts, sortBy) : [];
+        const posts = this.props.posts || [];
         const currentPath = this.props.location.pathname;
         return (
             <div className="posts">
@@ -51,15 +44,16 @@ class Posts extends Component {
 }
 
 function mapStateToProps (state) {
+    console.log('mapStateToProps => ',state);
     return {
         posts: state.postsReducer.posts,
-        sortBy: state.toggleSortReducer.sortBy
+        sortBy: state.postsReducer.sortBy
     };
 }
 
 function mapDispatchToProps (dispatch) {
     return {
-        storeFetchedPosts: (data) => dispatch(storePosts(data))
+        storePosts: (data,sortBy) => dispatch(storePosts(data,sortBy))
     }
 }
 

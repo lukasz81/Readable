@@ -1,44 +1,57 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {closeModal, openModal} from "../../shared-modal-content/actions";
-import {editPost, addPost,addComments} from "./actions";
+import {editPost, fetchPost, addComments, deleteComment} from "./actions";
+import {storePosts} from "../actions";
 import {ActionsPanel} from "./actions-ui-panel/index";
 import {connect} from "react-redux";
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import './index.css';
 
 class Post extends Component {
-
-    static API_URL = process.env.REACT_APP_BACKEND;
-
-    componentWillMount() {
-        if (this.isPostDetailPage) {
-            const id = this.props.match.params.id;
-            this.fetchPostAndSaveInStore(id);
+    constructor(props) {
+        super(props);
+        this.state = {
+            categories: [],
+            id: this.props.match ? this.props.match.params.id : null
         }
     }
 
-    fetchCommentsForPost(id) {
-        const url = `${Post.API_URL}/posts/${id}/comments`;
+    static API_URL = process.env.REACT_APP_BACKEND;
+
+    get ID() {
+        return this.state.id;
+    }
+
+    get isPostDetailPage() {
+        return this.props.hasOwnProperty('match') && this.props.match.path === '/:category/:id'
+    }
+
+    componentWillMount() {
+        if (this.isPostDetailPage) this.fetchPostAndSaveInStore(this.ID);
+    }
+
+    fetchPostAndSaveInStore() {
+        const url = `${Post.API_URL}/posts/${this.ID}`;
         fetch(url, {headers: {'Authorization': '*'}})
             .then(res => {
-                return ( res.json() )
+                return (res.json())
+            }).then(post => {
+                this.props.fetchPost(post);
+            }).then(() => {
+                if (this.isPostDetailPage) this.fetchCommentsForPost()
+            }).catch(error => console.error(error))
+    }
+
+    fetchCommentsForPost() {
+        const url = `${Post.API_URL}/posts/${this.ID}/comments`;
+        fetch(url, {headers: {'Authorization': '*'}})
+            .then(res => {
+                return (res.json())
             })
             .then(comments => {
                 this.props.addComments(comments)
             });
-    }
-
-    fetchPostAndSaveInStore(id) {
-        const url = `${Post.API_URL}/posts/${id}`;
-        fetch(url, {headers: {'Authorization': '*'}})
-            .then(res => {
-                return ( res.json() )
-            }).then(post => {
-            this.props.addPost(post);
-        }).then(() => {
-            if (this.isPostDetailPage) this.fetchCommentsForPost(id)
-        }).catch(error => console.error(error))
     }
 
     onDeleteElement(type, id) {
@@ -46,15 +59,15 @@ class Post extends Component {
         fetch(url, {
             method: 'DELETE',
             headers: {'Authorization': '*'}
-        }).then(res => {
-            return (res.json())
-        }).then(() => {
-            if (type === 'posts') {
-                this.props.history.push("/");
-            } else {
-                this.fetchCommentsForPost(this.props.singlePost.id);
-            }
-        }).catch(error => console.log(error))
+            }).then(res => {
+                return (res.json())
+            }).then(element => {
+                if (type === 'posts') {
+                    this.props.history.push("/");
+                } else {
+                    this.props.deleteComment(element);
+                }
+            }).catch(error => console.log(error))
     }
 
     onEditElement(type, element) {
@@ -81,7 +94,11 @@ class Post extends Component {
             return (res.json())
         }).then(response => {
             const ID = type === 'posts' ? id : response.parentId;
-            this.fetchPostAndSaveInStore(ID)
+            if (this.isPostDetailPage) {
+                this.fetchPostAndSaveInStore(ID)
+            } else {
+                console.log(this.props.posts,response)
+            }
         }).catch(error => console.log(error))
     }
 
@@ -93,24 +110,21 @@ class Post extends Component {
         });
     }
 
-    get isPostDetailPage() {
-        return this.props.hasOwnProperty('match') && this.props.match.path === '/:category/:id'
-    }
-
     render() {
         const {comments} = this.props;
         const post = this.isPostDetailPage ? this.props.singlePost : this.props.post;
         const {editedTitle, editedBody, isInEditMode} = this.isPostDetailPage ? this.props : {};
         return (
             <div>
-                {post !== undefined && (
+                {post && post.deleted === false ? (
                     <div>
                         <div className={this.isPostDetailPage ? 'post-detail' : 'post'} key={post.id}>
                             <Link to={`/${post.category}/${post.id}`}>
                                 <div className="post-link">
                                     <p>{editedTitle && isInEditMode ? editedTitle : post.title}</p>
                                     <small
-                                        className="color--silver">{editedBody && isInEditMode ? editedBody : post.body}</small>
+                                        className="color--silver">{editedBody && isInEditMode ? editedBody : post.body}
+                                    </small>
                                 </div>
                             </Link>
 
@@ -120,7 +134,6 @@ class Post extends Component {
                                           isDetailPage={this.isPostDetailPage}
                                           type={'posts'}
                                           element={post}/>
-
                         </div>
                         {(this.isPostDetailPage && comments !== undefined) && comments.map(comment => (
                             <div key={comment.id} className="post-comment attached--left">
@@ -142,6 +155,8 @@ class Post extends Component {
                             </div>
                         )}
                     </div>
+                ) : (
+                    <p>This post has been deleted</p>
                 )}
             </div>
         )
@@ -156,15 +171,18 @@ function mapStateToProps(state) {
         isInEditMode: state.postReducer.isInEditMode,
         newComment: state.postReducer.newComment,
         singlePost: state.postReducer.post,
-        comments: state.postReducer.comments
+        comments: state.postReducer.comments,
+        posts: state.postsReducer.posts
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         editPost: (data, post) => dispatch(editPost(data, post)),
-        addPost: (post) => dispatch(addPost(post)),
+        fetchPost: (post) => dispatch(fetchPost(post)),
+        deleteComment: (comment) => dispatch(deleteComment(comment)),
         addComments: (comments) => dispatch(addComments(comments)),
+        storePosts: (posts,sortBy) => dispatch(storePosts(posts,sortBy)),
         show: (data) => dispatch(openModal(data)),
         hide: (data) => dispatch(closeModal(data)),
     }

@@ -1,11 +1,19 @@
-export const ADD_POST = 'ADD_POST';
+export const FETCH_POST = 'FETCH_POST';
+export const DELETE_COMMENT = 'DELETE_COMMENT';
 export const ADD_COMMENTS = 'ADD_COMMENTS';
 export const EDIT_POST = 'EDIT_POST';
 
-export function addPost (post) {
+export function fetchPost (post) {
     return {
-        type: ADD_POST,
+        type: FETCH_POST,
         post
+    };
+}
+
+export function deleteComment (comment) {
+    return {
+        type: DELETE_COMMENT,
+        comment
     };
 }
 

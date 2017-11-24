@@ -4,7 +4,7 @@ import './index.css';
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import SortIcon from 'react-icons/lib/md/sort';
 import {connect} from 'react-redux';
-import {toggleSort} from '../navigation/actions';
+import {toggleSort} from "../posts/actions";
 
 class Navigation extends Component {
     constructor(props) {
@@ -36,7 +36,7 @@ class Navigation extends Component {
     }
 
     onToggleSort() {
-        this.props.sortBy({sortBy: ''})
+        this.props.toggleSort()
     }
 
     render() {
@@ -65,14 +65,13 @@ class Navigation extends Component {
 
 function mapDispatchToProps (dispatch) {
     return {
-        sortBy: (data) => dispatch(toggleSort(data))
+        toggleSort: () => dispatch(toggleSort())
     }
 }
 
 function mapStateToProps (state) {
     return {
-        state,
-        sort: state.toggleSortReducer.sortBy
+        state
     }
 }
 
