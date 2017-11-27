@@ -1,31 +1,36 @@
 import {
     STORE_POSTS,
     ADD_TO_POSTS,
+    REMOVE_FROM_POSTS,
     TOGGLE_SORT
 } from "./actions";
 
-let sortTypeIsScore = true;
-
-function postsReducer(state = [], action) {
-    console.log('action => ',action,state);
+function postsReducer(state = {sortBy:'score',posts:[]}, action) {
     switch (action.type) {
         case STORE_POSTS :
             return {
                 ...state,
-                posts: compare(action.posts,action.sortBy)
+                posts: compare(action.posts,state.sortBy)
             };
         case ADD_TO_POSTS :
             return {
                 ...state,
-                posts: compare(state.posts.concat(action.post),action.sortBy)
+                posts: compare(state.posts.filter(post => {
+                    return post.id !== action.post.id
+                }).concat(action.post),state.sortBy)
             };
-        case TOGGLE_SORT :
-            sortTypeIsScore = !sortTypeIsScore;
-            const sortBy = sortTypeIsScore ? 'score' : 'time';
+        case REMOVE_FROM_POSTS :
             return {
                 ...state,
-                sortBy: sortBy,
-                posts: compare(state.posts,sortBy)
+                posts: compare(state.posts.filter(post => {
+                    return post.id !== action.post.id
+                }),state.sortBy)
+            };
+        case TOGGLE_SORT :
+            return {
+                ...state,
+                sortBy: action.isScore ? 'score' : 'time',
+                posts: compare(state.posts,action.isScore ? 'score' : 'time')
             };
         default :
             return state

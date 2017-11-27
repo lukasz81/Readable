@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {closeModal} from "./actions";
-import {fetchPost,addComments} from "../posts/post/actions";
+import {savePost,saveComment} from "../posts/post/actions";
 import {connect} from "react-redux";
 import {addToPosts} from "../posts/actions";
 import {AddOrEditPostForm} from './add-or-edit-post-form';
@@ -54,19 +54,20 @@ class ModalContent extends Component {
     handleSubmit(event) {
         event.preventDefault();
         const post = this.state;
-        if (this.checkIfFormIsValid(post) && !this.props.action) {
+        const {action} = this.props;
+        if (this.checkIfFormIsValid(post) && !action) {
             this.fetchPost(post);
-        } else if (this.props.action === 'edit-comment') {
-            this.editComment()
-        } else if (this.props.action === 'edit-post') {
+        } else if (action === 'edit-comment') {
+            this.editComment();
+        } else if (action === 'edit-post') {
             this.editPost();
-        } else if (this.props.action === 'add-comment') {
+        } else if (action === 'add-comment') {
             const comment = {
               id: this.state.id,
               timestamp: this.state.timestamp,
               body: this.state.body,
               author: this.state.author,
-              parentId: this.props.id
+              parentId: this.props.post.id
             };
             this.addCommentToPost(comment)
         } else {
@@ -85,7 +86,7 @@ class ModalContent extends Component {
             },
             body: JSON.stringify(post)
         }).then(res => {
-            return (res.json())
+            return res.json()
         }).then(post => {
             this.props.addToPosts(post);
             this.props.hide({modalOpen: false});
@@ -101,10 +102,10 @@ class ModalContent extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(comment)
-        }).then(() => {
-            const comments = this.props.comments;
-            const addedComments = comments.concat(comment);
-            this.props.addComments(addedComments);
+        }).then(res => {
+            return res.json()
+        }).then(comment => {
+            this.props.saveComment(comment);
             this.props.hide({modalOpen: false});
         }).catch(error => {console.log(error)})
     }
@@ -121,12 +122,11 @@ class ModalContent extends Component {
                 title: this.state.title,
                 body: this.state.body
             })
-        }).then(() => {
-            this.props.fetchPost({
-                title: this.state.title,
-                body: this.state.body
-            });
-            this.props.hide({modalOpen: false})
+        }).then(res => {
+            return res.json()
+        }).then(post => {
+            this.props.addToPosts(post);
+            this.props.hide({modalOpen: false});
         }).catch(error => {console.log(error)})
     }
 
@@ -142,7 +142,10 @@ class ModalContent extends Component {
                 timestamp: Date.now(),
                 body: this.state.body
             })
-        }).then(() => {
+        }).then(res => {
+            return res.json()
+        }).then(comment => {
+            this.props.saveComment(comment);
             this.props.hide({modalOpen: false})
         }).catch(error => {console.log(error)})
     }
@@ -169,18 +172,21 @@ class ModalContent extends Component {
     }
 }
 function mapStateToProps (state) {
+    console.log('shared mapStateToProps => ', state);
     return {
+        ///posts
         sort: state.postsReducer.sortBy,
         posts: state.postsReducer.posts,
-        isInEditMode: state.postReducer.isInEditMode,
-        postTitle: state.postReducer.postTitle,
-        postBody: state.postReducer.postBody,
-        id: state.postReducer.id || state.modalReducer.parentId,
-        action: state.modalReducer.actionType,
-        commentBody: state.modalReducer.commentBody,
-        commentId: state.modalReducer.commentId,
+        ///post
+        postTitle: state.postReducer.postData.postTitle,
+        postBody: state.postReducer.postData.postBody,
+        id: state.postReducer.postData.postId,
+        commentBody: state.postReducer.commentData.commentBody,
+        commentId: state.postReducer.commentData.commentId,
         comments: state.postReducer.comments,
-        post: state.postReducer.post
+        post: state.postReducer.post,
+        ///modal
+        action: state.modalReducer.actionType
     };
 }
 
@@ -188,9 +194,9 @@ function mapDispatchToProps (dispatch) {
     return {
         hide: (data) => dispatch(closeModal(data)),
         addToPosts: (post) => dispatch(addToPosts(post)),
-        fetchPost: (post) => dispatch(fetchPost(post)),
-        addComments: (comments) => dispatch(addComments(comments))
-    }
+        savePost: (post) => dispatch(savePost(post)),
+        saveComment: (comment) => dispatch(saveComment(comment))
+    };
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(ModalContent);

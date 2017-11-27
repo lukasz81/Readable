@@ -44,7 +44,6 @@ class Posts extends Component {
 }
 
 function mapStateToProps (state) {
-    console.log('mapStateToProps => ',state);
     return {
         posts: state.postsReducer.posts,
         sortBy: state.postsReducer.sortBy

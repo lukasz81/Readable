@@ -1,25 +1,27 @@
 import {
-    FETCH_POST,
+    SAVE_POST,
     DELETE_COMMENT,
     ADD_COMMENTS,
     EDIT_POST,
+    EDIT_COMMENT,
+    SAVE_COMMENT
 } from "./actions";
 
-function postReducer(state = { isInEditMode: false }, action) {
-    console.log('postReducer => ',action,state);
+function postReducer(state = {
+        postData:{postTitle: ''},
+        commentData:{commentBody: ''},
+        comments: []
+    }, action) {
     switch (action.type) {
-        case FETCH_POST :
+        case SAVE_POST :
             return {
                 ...state,
-                isInEditMode: false,
-                editedTitle: null,
-                editedBody: null,
                 post: action.post
             };
         case DELETE_COMMENT :
             return {
                 ...state,
-                comments: state.comments.filter( comment => {
+                comments: state.comments.filter(comment => {
                     return comment.id !== action.comment.id
                 })
             };
@@ -31,12 +33,19 @@ function postReducer(state = { isInEditMode: false }, action) {
         case EDIT_POST :
             return {
                 ...state,
-                isInEditMode: true,
-                postTitle: action.post.title,
-                postBody: action.post.body,
-                id: action.post.id,
-                editedTitle: null,
-                editedBody: null
+                postData: action.post
+            };
+        case EDIT_COMMENT :
+            return {
+                ...state,
+                commentData: action.commentData
+            };
+        case SAVE_COMMENT :
+            return {
+                ...state,
+                comments: state.comments.filter(comment => {
+                    return comment.id !== action.comment.id
+                }).concat(action.comment)
             };
         default :
             return state

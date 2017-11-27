@@ -71,7 +71,8 @@ function mapDispatchToProps (dispatch) {
 
 function mapStateToProps (state) {
     return {
-        state
+        state,
+        sort: state.postsReducer.sortBy ? state.postsReducer.sortBy : 'score'
     }
 }
 
