@@ -1,9 +1,9 @@
-export const SAVE_POST = 'SAVE_POST';
-export const DELETE_COMMENT = 'DELETE_COMMENT';
-export const ADD_COMMENTS = 'ADD_COMMENTS';
-export const EDIT_POST = 'EDIT_POST';
-export const EDIT_COMMENT = 'EDIT_COMMENT';
-export const SAVE_COMMENT = 'SAVE_COMMENT';
+import {SAVE_POST} from "./action-types";
+import {DELETE_COMMENT} from "./action-types";
+import {ADD_COMMENTS} from "./action-types";
+import {EDIT_POST} from "./action-types";
+import {EDIT_COMMENT} from "./action-types";
+import {SAVE_COMMENT} from "./action-types";
 
 export function savePost (post) {
     return {
@@ -41,13 +41,6 @@ export function editComment (commentData) {
 }
 
 export function saveComment (comment) {
-    return {
-        type: SAVE_COMMENT,
-        comment
-    };
-}
-
-export function addNewComment (comment) {
     return {
         type: SAVE_COMMENT,
         comment

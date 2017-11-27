@@ -1,7 +1,7 @@
 import {
     OPEN_MODAL,
     CLOSE_MODAL
-} from "./actions";
+} from "./action-types";
 
 function modalReducer(state = {
         modalOpen: false,

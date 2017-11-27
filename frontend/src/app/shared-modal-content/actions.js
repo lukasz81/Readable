@@ -1,5 +1,5 @@
-export const CLOSE_MODAL = 'CLOSE_MODAL';
-export const OPEN_MODAL = 'OPEN_MODAL';
+import {CLOSE_MODAL} from "./action-types";
+import {OPEN_MODAL} from "./action-types"
 
 export function openModal (value) {
     return {

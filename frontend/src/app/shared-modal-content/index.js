@@ -172,7 +172,6 @@ class ModalContent extends Component {
     }
 }
 function mapStateToProps (state) {
-    console.log('shared mapStateToProps => ', state);
     return {
         ///posts
         sort: state.postsReducer.sortBy,

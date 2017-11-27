@@ -5,7 +5,7 @@ import {
     EDIT_POST,
     EDIT_COMMENT,
     SAVE_COMMENT
-} from "./actions";
+} from "./action-types";
 
 function postReducer(state = {
         postData:{postTitle: ''},

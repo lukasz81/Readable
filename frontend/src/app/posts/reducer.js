@@ -3,7 +3,7 @@ import {
     ADD_TO_POSTS,
     REMOVE_FROM_POSTS,
     TOGGLE_SORT
-} from "./actions";
+} from "./action-types";
 
 function postsReducer(state = {sortBy:'score',posts:[]}, action) {
     switch (action.type) {
