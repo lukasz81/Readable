@@ -15,6 +15,7 @@ function postsReducer(state = {sortBy:'score',posts:[]}, action) {
         case ADD_TO_POSTS :
             return {
                 ...state,
+                post: action.post,
                 posts: compare(state.posts.filter(post => {
                     return post.id !== action.post.id
                 }).concat(action.post),state.sortBy)

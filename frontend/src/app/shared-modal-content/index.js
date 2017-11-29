@@ -35,9 +35,8 @@ class ModalContent extends Component {
     }
 
     handleInputChange(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
+        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        const name = event.target.name;
         this.setState({
             [name]: value
         });
@@ -53,25 +52,27 @@ class ModalContent extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const post = this.state;
         const {action} = this.props;
-        if (this.checkIfFormIsValid(post) && !action) {
-            this.fetchPost(post);
-        } else if (action === 'edit-comment') {
-            this.editComment();
-        } else if (action === 'edit-post') {
-            this.editPost();
-        } else if (action === 'add-comment') {
-            const comment = {
-              id: this.state.id,
-              timestamp: this.state.timestamp,
-              body: this.state.body,
-              author: this.state.author,
-              parentId: this.props.post.id
-            };
-            this.addCommentToPost(comment)
-        } else {
-            alert('Fill up all the fields please');
+        switch (action) {
+            case 'edit-comment' :
+                return this.editComment();
+            case 'edit-post' :
+                return this.editPost();
+            case 'add-comment' :
+                const comment = {
+                    id: this.state.id,
+                    timestamp: this.state.timestamp,
+                    body: this.state.body,
+                    author: this.state.author,
+                    parentId: this.props.post.id
+                };
+                return this.addCommentToPost(comment);
+            default :
+                if (this.checkIfFormIsValid(this.state)) {
+                    this.fetchPost(this.state);
+                } else {
+                    alert('Fill up all the fields please');
+                }
         }
 
     }
@@ -125,7 +126,11 @@ class ModalContent extends Component {
         }).then(res => {
             return res.json()
         }).then(post => {
-            this.props.addToPosts(post);
+            if (this.props.detailPage) {
+                this.props.savePost(post);
+            } else {
+                this.props.addToPosts(post);
+            }
             this.props.hide({modalOpen: false});
         }).catch(error => {console.log(error)})
     }
@@ -184,6 +189,7 @@ function mapStateToProps (state) {
         commentId: state.postReducer.commentData.commentId,
         comments: state.postReducer.comments,
         post: state.postReducer.post,
+        detailPage: state.postReducer.isPostDetailPage,
         ///modal
         action: state.modalReducer.actionType
     };

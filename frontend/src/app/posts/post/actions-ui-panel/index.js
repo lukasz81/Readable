@@ -98,12 +98,6 @@ class ActionsPanel extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        post: state.postReducer.post,
-    };
-}
-
 function mapDispatchToProps(dispatch) {
     return {
         addToPosts: (post) => dispatch(addToPosts(post)),
@@ -117,4 +111,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(ActionsPanel);
+export default connect(null,mapDispatchToProps)(ActionsPanel);

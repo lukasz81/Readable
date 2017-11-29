@@ -4,6 +4,7 @@ import {ADD_COMMENTS} from "./action-types";
 import {EDIT_POST} from "./action-types";
 import {EDIT_COMMENT} from "./action-types";
 import {SAVE_COMMENT} from "./action-types";
+import {IS_ON_DETAIL_PAGE} from "./action-types";
 
 export function savePost (post) {
     return {
@@ -44,5 +45,12 @@ export function saveComment (comment) {
     return {
         type: SAVE_COMMENT,
         comment
+    };
+}
+
+export function isOnDetailPage (isPostDetailPage) {
+    return {
+        type: IS_ON_DETAIL_PAGE,
+        isPostDetailPage
     };
 }

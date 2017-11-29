@@ -4,13 +4,15 @@ import {
     ADD_COMMENTS,
     EDIT_POST,
     EDIT_COMMENT,
-    SAVE_COMMENT
+    SAVE_COMMENT,
+    IS_ON_DETAIL_PAGE
 } from "./action-types";
 
 function postReducer(state = {
         postData:{postTitle: ''},
         commentData:{commentBody: ''},
-        comments: []
+        comments: [],
+        isPostDetailPage: false
     }, action) {
     switch (action.type) {
         case SAVE_POST :
@@ -41,11 +43,16 @@ function postReducer(state = {
                 commentData: action.commentData
             };
         case SAVE_COMMENT :
+            const index = state.comments.findIndex(comment => comment.id === action.comment.id);
+            const comments = state.comments.map((comment,i) => i === index ? action.comment : comment);
             return {
                 ...state,
-                comments: state.comments.filter(comment => {
-                    return comment.id !== action.comment.id
-                }).concat(action.comment)
+                comments: index !== -1 ? comments : state.comments.concat(action.comment)
+            };
+        case IS_ON_DETAIL_PAGE :
+            return {
+                ...state,
+                isPostDetailPage: action.isPostDetailPage
             };
         default :
             return state

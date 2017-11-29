@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Post from './post/index';
 import {connect} from "react-redux";
 import {storePosts} from './actions';
+import {isOnDetailPage} from "./post/actions";
 
 class Posts extends Component {
     constructor(props) {
@@ -20,6 +21,7 @@ class Posts extends Component {
     }
 
     componentWillMount() {
+        this.props.isOnDetailPage(false);
         const url = `${process.env.REACT_APP_BACKEND}/posts`;
         fetch(url, {headers: {'Authorization': '*'}})
             .then(res => {
@@ -45,6 +47,7 @@ class Posts extends Component {
 
 function mapStateToProps (state) {
     return {
+        post: state.postReducer.post,
         posts: state.postsReducer.posts,
         sortBy: state.postsReducer.sortBy
     };
@@ -52,7 +55,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        storePosts: (data,sortBy) => dispatch(storePosts(data,sortBy))
+        storePosts: (data,sortBy) => dispatch(storePosts(data,sortBy)),
+        isOnDetailPage: (boolean) => dispatch(isOnDetailPage(boolean))
     }
 }
 

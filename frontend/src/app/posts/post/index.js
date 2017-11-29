@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {closeModal, openModal} from "../../shared-modal-content/actions";
-import {editPost, savePost, addComments, deleteComment} from "./actions";
+import {editPost, savePost, addComments, deleteComment, isOnDetailPage} from "./actions";
 import {storePosts} from "../actions";
 import ActionsPanel from "./actions-ui-panel/index";
 import {connect} from "react-redux";
@@ -28,7 +28,10 @@ class Post extends Component {
     }
 
     componentWillMount() {
-        if (this.isPostDetailPage) this.fetchPostAndSaveInStore(this.ID);
+        if (this.isPostDetailPage) {
+            this.fetchPostAndSaveInStore(this.ID);
+            this.props.isOnDetailPage(this.isPostDetailPage);
+        }
     }
 
     fetchPostAndSaveInStore() {
@@ -111,11 +114,8 @@ class Post extends Component {
 
 function mapStateToProps(state) {
     return {
-        modalOpen: state.modalReducer.modalOpen,
         editedTitle: state.postReducer.editedTitle,
         editedBody: state.postReducer.editedBody,
-        isInEditMode: state.postReducer.isInEditMode,
-        newComment: state.postReducer.newComment,
         singlePost: state.postReducer.post,
         comments: state.postReducer.comments,
         posts: state.postsReducer.posts
@@ -131,6 +131,7 @@ function mapDispatchToProps(dispatch) {
         storePosts: (posts,sortBy) => dispatch(storePosts(posts,sortBy)),
         show: (data) => dispatch(openModal(data)),
         hide: (data) => dispatch(closeModal(data)),
+        isOnDetailPage: (boolean) => dispatch(isOnDetailPage(boolean))
     }
 }
 
