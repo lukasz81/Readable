@@ -4,7 +4,8 @@ import {savePost,saveComment} from "../posts/post/actions";
 import {connect} from "react-redux";
 import {addToPosts} from "../posts/actions";
 import {AddOrEditPostForm} from './add-or-edit-post-form';
-import {AddOrEditCommentForm} from './add-or-edit-comment-form'
+import {AddOrEditCommentForm} from './add-or-edit-comment-form';
+import * as API from "../api";
 import './index.css';
 
 class ModalContent extends Component {
@@ -78,81 +79,44 @@ class ModalContent extends Component {
     }
 
     fetchPost(post) {
-        const url = `${process.env.REACT_APP_BACKEND}/posts`;
-        fetch(url, {
-            method:'POST',
-            headers: {
-                'Authorization': '*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(post)
-        }).then(res => {
-            return res.json()
-        }).then(post => {
-            this.props.addToPosts(post);
-            this.props.hide({modalOpen: false});
-        }).catch(error => {console.log(error)})
+        API.postActions('/posts',post)
+            .then(post => {
+                this.props.addToPosts(post);
+                this.props.hide({modalOpen: false});
+            })
     }
 
     addCommentToPost(comment) {
-        const url = `${process.env.REACT_APP_BACKEND}/comments`;
-        fetch(url, {
-            method:'POST',
-            headers: {
-                'Authorization': '*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(comment)
-        }).then(res => {
-            return res.json()
-        }).then(comment => {
-            this.props.saveComment(comment);
-            this.props.hide({modalOpen: false});
-        }).catch(error => {console.log(error)})
+        API.postActions('/comments',comment)
+            .then(comment => {
+                this.props.saveComment(comment);
+                this.props.hide({modalOpen: false});
+            })
     }
 
     editPost() {
-        const url = `${process.env.REACT_APP_BACKEND}/posts/${this.props.id}`;
-        fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Authorization': '*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: this.state.title,
-                body: this.state.body
-            })
-        }).then(res => {
-            return res.json()
-        }).then(post => {
-            if (this.props.detailPage) {
-                this.props.savePost(post);
-            } else {
-                this.props.addToPosts(post);
-            }
-            this.props.hide({modalOpen: false});
-        }).catch(error => {console.log(error)})
+        const {detailPage,id} = this.props;
+        const body = {
+            title: this.state.title,
+            body: this.state.body
+        };
+        API.editElements(`/posts/${id}`,body)
+            .then(post => {
+                detailPage ? this.props.savePost(post) : this.props.addToPosts(post);
+                this.props.hide({modalOpen: false});
+            });
     }
 
     editComment() {
-        const url = `${process.env.REACT_APP_BACKEND}/comments/${this.props.commentId}`;
-        fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Authorization': '*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                timestamp: Date.now(),
-                body: this.state.body
+        const body = {
+            timestamp: Date.now(),
+            body: this.state.body
+        };
+        API.editElements(`/comments/${this.props.commentId}`,body)
+            .then(comment => {
+                this.props.saveComment(comment);
+                this.props.hide({modalOpen: false})
             })
-        }).then(res => {
-            return res.json()
-        }).then(comment => {
-            this.props.saveComment(comment);
-            this.props.hide({modalOpen: false})
-        }).catch(error => {console.log(error)})
     }
 
     render() {

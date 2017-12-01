@@ -7,6 +7,7 @@ import ActionsPanel from "./actions-ui-panel/index";
 import {connect} from "react-redux";
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import './index.css';
+import * as API from "../../api/index";
 
 class Post extends Component {
     constructor(props) {
@@ -16,8 +17,6 @@ class Post extends Component {
             id: this.props.match ? this.props.match.params.id : null
         }
     }
-
-    static API_URL = process.env.REACT_APP_BACKEND;
 
     get ID() {
         return this.state.id;
@@ -35,23 +34,16 @@ class Post extends Component {
     }
 
     fetchPostAndSaveInStore() {
-        const url = `${Post.API_URL}/posts/${this.ID}`;
-        fetch(url, {headers: {'Authorization': '*'}})
-            .then(res => {
-                return (res.json())
-            }).then(post => {
+        API.fetchElements(`/posts/${this.ID}`)
+            .then(post => {
                 this.props.savePost(post);
             }).then(() => {
                 if (this.isPostDetailPage) this.fetchCommentsForPost()
-            }).catch(error => console.error(error))
+            })
     }
 
     fetchCommentsForPost() {
-        const url = `${Post.API_URL}/posts/${this.ID}/comments`;
-        fetch(url, {headers: {'Authorization': '*'}})
-            .then(res => {
-                return (res.json())
-            })
+        API.fetchElements(`/posts/${this.ID}/comments`)
             .then(comments => {
                 this.props.addComments(comments)
             });

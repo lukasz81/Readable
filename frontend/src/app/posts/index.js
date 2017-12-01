@@ -3,6 +3,7 @@ import Post from './post/index';
 import {connect} from "react-redux";
 import {storePosts} from './actions';
 import {isOnDetailPage} from "./post/actions";
+import * as API from "../api";
 
 class Posts extends Component {
     constructor(props) {
@@ -22,13 +23,9 @@ class Posts extends Component {
 
     componentWillMount() {
         this.props.isOnDetailPage(false);
-        const url = `${process.env.REACT_APP_BACKEND}/posts`;
-        fetch(url, {headers: {'Authorization': '*'}})
-            .then(res => {
-                return ( res.json() )
-            }).then(posts => {
+        API.fetchElements('/posts').then(posts => {
             this.props.storePosts(posts,'score');
-            });
+        });
     }
 
     render() {

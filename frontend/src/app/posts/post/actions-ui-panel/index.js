@@ -4,6 +4,11 @@ import {addToPosts,removeFromPosts} from "../../actions";
 import {editPost,editComment,deleteComment,savePost,saveComment} from "../actions";
 import {openModal} from "../../../shared-modal-content/actions";
 import {connect} from "react-redux";
+import DownVoteIcon from 'react-icons/lib/fa/thumbs-down';
+import UpVoteIcon from 'react-icons/lib/fa/thumbs-up';
+import EditIcon from 'react-icons/lib/md/edit';
+import DeleteIcon from 'react-icons/lib/md/delete';
+import * as API from "../../../api/index";
 
 class ActionsPanel extends Component {
 
@@ -12,44 +17,24 @@ class ActionsPanel extends Component {
     }
 
     onVote(type, id, action) {
-        const url = `${process.env.REACT_APP_BACKEND}/${type}/${id}`;
-        fetch(url, {
-            headers: {
-                'Authorization': '*',
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify({option: action.toString()})
-        }).then(res => {
-            return res.json()
-        }).then(response => {
-            if (type === 'posts') {
-                if (!this.isPostDetailPage) {
-                    this.props.addToPosts(response);
-                } else {
-                    this.props.savePost(response);
-                }
-            } else {
-                this.props.saveComment(response);
-            }
-        }).catch(error => console.log(error))
+        API.postActions(`/${type}/${id}`,{option: action})
+            .then(response => {
+                if (type === 'posts') {
+                    this.isPostDetailPage ? this.props.savePost(response) : this.props.addToPosts(response);
+                } else {this.props.saveComment(response);}
+            })
     }
 
     onDeleteElement(type, id) {
-        const url = `${process.env.REACT_APP_BACKEND}/${type}/${id}`;
-        fetch(url, {
-            method: 'DELETE',
-            headers: {'Authorization': '*'}
-        }).then(res => {
-            return res.json()
-        }).then(element => {
-            if (type === 'posts') {
-                if (this.isPostDetailPage) this.props.history.push("/");
-                this.props.removeFromPosts(element)
-            } else {
-                this.props.deleteComment(element);
-            }
-        }).catch(error => console.log(error))
+        API.deleteElements(`/${type}/${id}`)
+            .then(element => {
+                if (type === 'posts') {
+                    if (this.isPostDetailPage) this.props.history.push("/");
+                    this.props.removeFromPosts(element)
+                } else {
+                    this.props.deleteComment(element);
+                }
+        });
     }
 
     onEditElement(type, element) {
@@ -84,13 +69,26 @@ class ActionsPanel extends Component {
                 <small className="color--silver-light">Created: <Moment fromNow>{element.timestamp}</Moment></small>
                 <span>
                     <br/>
-                    <small onClick={() => this.onEditElement(type, element)} className="actionable edit color--green"> EDIT </small>
-                    <small><span>•</span></small>
-                    <small onClick={() => this.onDeleteElement(type, element.id)} className="actionable delete color--red"> DELETE</small>
-                    <small><span>•</span></small>
-                    <small onClick={() => this.onVote(type, element.id, 'upVote')} className="actionable delete color--green"> UPVOTE</small>
-                    <small><span>•</span></small>
-                    <small onClick={() => this.onVote(type, element.id, 'downVote')} className="actionable delete color--red"> DOWNVOTE</small>
+                    <small onClick={() => this.onEditElement(type, element)}
+                           className="actionable edit color--green"
+                           title="Edit">
+                        <EditIcon size={20}/>
+                    </small>
+                    <small onClick={() => this.onDeleteElement(type, element.id)}
+                           className="actionable delete color--red"
+                           title="Delete" >
+                        <DeleteIcon size={20}/>
+                    </small>
+                    <small onClick={() => this.onVote(type, element.id, 'upVote')}
+                           className="actionable delete color--green"
+                           title="Upvote">
+                        <UpVoteIcon size={20}/>
+                    </small>
+                    <small onClick={() => this.onVote(type, element.id, 'downVote')}
+                           className="actionable delete color--red"
+                           title="Downvote">
+                        <DownVoteIcon size={20}/>
+                    </small>
                 </span>
             </div>
 

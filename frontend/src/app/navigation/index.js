@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import './index.css';
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import SortIcon from 'react-icons/lib/md/sort';
 import {connect} from 'react-redux';
 import {toggleSort} from "../posts/actions";
+import * as API from "../api/index";
+import './index.css';
 
 class Navigation extends Component {
     constructor(props) {
@@ -14,17 +15,10 @@ class Navigation extends Component {
         }
     }
 
-    static ICON_SIZE = 35;
-
     componentDidMount() {
-        const url = `${process.env.REACT_APP_BACKEND}/categories`;
-        fetch(url, {headers: {'Authorization': '*'}})
-            .then(res => {
-                return ( res.json() )
-            })
-            .then(data => {
-                this.setState({categories: data.categories});
-            });
+        API.fetchElements('/categories').then(data => {
+            this.setState({categories: data.categories});
+        });
     }
 
     static chooseClassNameForLink(currentPath, path) {
@@ -52,11 +46,11 @@ class Navigation extends Component {
                         </li>
                     </Link>
                 ))}
-                <li title="Add post" onClick={() => this.onShowModal()} className='add-new nav-icon active'><AddIcon size={Navigation.ICON_SIZE}/></li>
+                <li title="Add post" onClick={() => this.onShowModal()} className='add-new nav-icon active'><AddIcon size={35}/></li>
                 <li title={`Currently sorted by ${this.props.sort}`} className='nav-icon active'>
                     <SortIcon className={this.props.sort}
                               onClick={() => this.onToggleSort()}
-                              size={Navigation.ICON_SIZE}/>
+                              size={35}/>
                 </li>
             </ul>
         );

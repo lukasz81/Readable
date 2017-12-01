@@ -44,10 +44,12 @@ function postReducer(state = {
             };
         case SAVE_COMMENT :
             const index = state.comments.findIndex(comment => comment.id === action.comment.id);
-            const comments = state.comments.map((comment,i) => i === index ? action.comment : comment);
+            const comments = state.comments.map((comment,i) =>
+                i === index ? action.comment : comment
+            );
             return {
                 ...state,
-                comments: index !== -1 ? comments : state.comments.concat(action.comment)
+                comments: (index > -1) ? comments : state.comments.concat(action.comment)
             };
         case IS_ON_DETAIL_PAGE :
             return {
