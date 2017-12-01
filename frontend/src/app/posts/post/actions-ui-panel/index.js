@@ -26,13 +26,14 @@ class ActionsPanel extends Component {
     }
 
     onDeleteElement(type, id) {
+        const sure = window.confirm(`Are you sure you want to delete the ${type.slice(0, -1)}`);
         API.deleteElements(`/${type}/${id}`)
             .then(element => {
-                if (type === 'posts') {
+                if (type === 'posts' && sure) {
                     if (this.isPostDetailPage) this.props.history.push("/");
                     this.props.removeFromPosts(element)
                 } else {
-                    this.props.deleteComment(element);
+                    sure ? this.props.deleteComment(element) : null;
                 }
         });
     }
@@ -61,10 +62,10 @@ class ActionsPanel extends Component {
         const {element, type} = this.props;
         return (
             <div className="post-info">
-                <small className="color--silver-light">{`Score: ${element.voteScore} `}<span>•</span></small>
-                <small className="color--silver-light">{`Author: ${element.author} `}<span>•</span></small>
+                <small className="color--silver-light">{`Score: ${element.voteScore}`}<span> • </span></small>
+                <small className="color--silver-light">{`Author: ${element.author}`}<span> • </span></small>
                 {element.commentCount !== undefined && (
-                    <small className="color--silver-light">{`Comments: ${element.commentCount} `}<span>•</span></small>
+                    <small className="color--silver-light">{`Comments: ${element.commentCount}`}<span> • </span></small>
                 )}
                 <small className="color--silver-light">Created: <Moment fromNow>{element.timestamp}</Moment></small>
                 <span>

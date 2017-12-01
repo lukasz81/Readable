@@ -18,19 +18,19 @@ function postReducer(state = {
         case SAVE_POST :
             return {
                 ...state,
-                post: action.post
+                post:   action.post
             };
         case DELETE_COMMENT :
             return {
                 ...state,
-                comments: state.comments.filter(comment => {
-                    return comment.id !== action.comment.id
-                })
+                comments:   Object.assign([],state,state.comments.filter(comment => {
+                                return comment.id !== action.comment.id
+                            }))
             };
         case ADD_COMMENTS :
             return {
                 ...state,
-                comments: action.comments
+                comments: Object.assign([],state,action.comments)
             };
         case EDIT_POST :
             return {

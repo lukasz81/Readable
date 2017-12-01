@@ -6,11 +6,14 @@ const deleteOptions = {
     headers: {'Authorization': '*'},
     method: 'DELETE'
 };
-const putOptions = {
-    method: 'PUT',
-    headers: {
-        'Authorization': '*',
-        'Content-Type': 'application/json'
+const putOptions = body => {
+    return {
+        method: 'PUT',
+        headers: {
+            'Authorization': '*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
     }
 };
 const postOptions = body => {
@@ -51,9 +54,9 @@ export function deleteElements(path) {
         )
 }
 
-export function editElements(path) {
+export function editElements(path,body) {
     const url = `${baseUrl + path}`;
-    return fetch(url,putOptions)
+    return fetch(url,putOptions(body))
         .then(
             res => {return res.json()},
             error => {console.error(error)}
