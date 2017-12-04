@@ -1,16 +1,22 @@
-import {STORE_POSTS} from "./action-types";
-import {ADD_TO_POSTS} from "./action-types";
-import {REMOVE_FROM_POSTS} from "./action-types";
-import {TOGGLE_SORT} from "./action-types";
+import {
+    STORE_POSTS,
+    ADD_TO_POSTS,
+    REMOVE_FROM_POSTS,
+    TOGGLE_SORT
+} from "./action-types";
+import * as API from "../api";
 
 let sortTypeIsScore = true;
 
-export function storePosts (posts,sortBy) {
-    return {
-        type: STORE_POSTS,
-        posts: posts,
-        sortBy
-    };
+export function storePosts (sortBy) {
+    return (dispatch) => {
+        API.fetchElements('/posts')
+            .then(posts => dispatch({
+                type: STORE_POSTS,
+                posts: posts,
+                sortBy
+            }));
+    }
 }
 
 export function addToPosts (post) {

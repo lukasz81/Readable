@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import Moment from 'react-moment';
 import {addToPosts,removeFromPosts} from "../../actions";
 import {editPost,editComment,deleteComment,savePost,saveComment} from "../actions";
-import {openModal} from "../../../shared-modal-content/actions";
+import {toggleModal} from "../../../shared-modal-content/actions";
 import {connect} from "react-redux";
-import DownVoteIcon from 'react-icons/lib/fa/thumbs-down';
-import UpVoteIcon from 'react-icons/lib/fa/thumbs-up';
-import EditIcon from 'react-icons/lib/md/edit';
-import DeleteIcon from 'react-icons/lib/md/delete';
+import DownVoteIcon from 'react-icons/lib/ti/thumbs-down';
+import UpVoteIcon from 'react-icons/lib/ti/thumbs-up';
+import EditIcon from 'react-icons/lib/ti/edit';
+import DeleteIcon from 'react-icons/lib/ti/trash';
 import * as API from "../../../api/index";
 
 class ActionsPanel extends Component {
@@ -27,20 +27,21 @@ class ActionsPanel extends Component {
 
     onDeleteElement(type, id) {
         const sure = window.confirm(`Are you sure you want to delete the ${type.slice(0, -1)}`);
-        API.deleteElements(`/${type}/${id}`)
-            .then(element => {
-                if (type === 'posts' && sure) {
-                    if (this.isPostDetailPage) this.props.history.push("/");
-                    this.props.removeFromPosts(element)
-                } else {
-                    sure ? this.props.deleteComment(element) : null;
-                }
-        });
+        if (sure) {
+            API.deleteElements(`/${type}/${id}`)
+                .then(element => {
+                    if (type === 'posts') {
+                        if (this.isPostDetailPage) this.props.history.push("/");
+                        this.props.removeFromPosts(element)
+                    } else {
+                        this.props.deleteComment(element);
+                    }
+                });
+        }
     }
 
     onEditElement(type, element) {
-        this.props.showModal({
-            modalOpen: true,
+        this.props.toggleModal({
             type: type === 'posts' ? 'edit-post' : 'edit-comment'
         });
         if (type === 'posts') {
@@ -71,22 +72,22 @@ class ActionsPanel extends Component {
                 <span>
                     <br/>
                     <small onClick={() => this.onEditElement(type, element)}
-                           className="actionable edit color--green"
+                           className="actionable edit color--silver"
                            title="Edit">
                         <EditIcon size={20}/>
                     </small>
                     <small onClick={() => this.onDeleteElement(type, element.id)}
-                           className="actionable delete color--red"
+                           className="actionable delete color--silver"
                            title="Delete" >
                         <DeleteIcon size={20}/>
                     </small>
                     <small onClick={() => this.onVote(type, element.id, 'upVote')}
-                           className="actionable delete color--green"
+                           className="actionable delete color--silver"
                            title="Upvote">
                         <UpVoteIcon size={20}/>
                     </small>
                     <small onClick={() => this.onVote(type, element.id, 'downVote')}
-                           className="actionable delete color--red"
+                           className="actionable delete color--silver"
                            title="Downvote">
                         <DownVoteIcon size={20}/>
                     </small>
@@ -104,7 +105,7 @@ function mapDispatchToProps(dispatch) {
         editPost: (post) => dispatch(editPost(post)),
         editComment: (comment) => dispatch(editComment(comment)),
         saveComment: (comment) => dispatch(saveComment(comment)),
-        showModal: (data) => dispatch(openModal(data)),
+        toggleModal: (data) => dispatch(toggleModal(data)),
         deleteComment: (comment) => dispatch(deleteComment(comment)),
         removeFromPosts: (post) => dispatch(removeFromPosts(post))
     };

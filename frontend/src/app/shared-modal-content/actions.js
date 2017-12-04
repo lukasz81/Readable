@@ -1,16 +1,11 @@
-import {CLOSE_MODAL} from "./action-types";
-import {OPEN_MODAL} from "./action-types"
+import {TOGGLE_MODAL} from "./action-types";
 
-export function openModal (value) {
-    return {
-        type: OPEN_MODAL,
-        value
-    };
-}
+let isModalOpen = false;
 
-export function closeModal (value) {
+export function toggleModal(value) {
     return {
-        type: CLOSE_MODAL,
+        type: TOGGLE_MODAL,
+        isModalOpen: isModalOpen = !isModalOpen,
         value
     };
 }

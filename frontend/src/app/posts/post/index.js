@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {closeModal, openModal} from "../../shared-modal-content/actions";
+import {toggleModal} from "../../shared-modal-content/actions";
 import {editPost, savePost, addComments, deleteComment, isOnDetailPage} from "./actions";
 import {storePosts} from "../actions";
 import ActionsPanel from "./actions-ui-panel/index";
@@ -50,8 +50,7 @@ class Post extends Component {
     }
 
     onAddComment() {
-        this.props.show({
-            modalOpen: true,
+        this.props.toggleModal({
             type: 'add-comment'
         });
     }
@@ -121,8 +120,7 @@ function mapDispatchToProps(dispatch) {
         deleteComment: (comment) => dispatch(deleteComment(comment)),
         addComments: (comments) => dispatch(addComments(comments)),
         storePosts: (posts,sortBy) => dispatch(storePosts(posts,sortBy)),
-        show: (data) => dispatch(openModal(data)),
-        hide: (data) => dispatch(closeModal(data)),
+        toggleModal: (data) => dispatch(toggleModal(data)),
         isOnDetailPage: (boolean) => dispatch(isOnDetailPage(boolean))
     }
 }

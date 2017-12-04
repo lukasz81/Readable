@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {closeModal} from "./actions";
+import {toggleModal} from "./actions";
 import {savePost,saveComment} from "../posts/post/actions";
 import {connect} from "react-redux";
 import {addToPosts} from "../posts/actions";
@@ -161,7 +161,7 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        hide: (data) => dispatch(closeModal(data)),
+        hide: (data) => dispatch(toggleModal(data)),
         addToPosts: (post) => dispatch(addToPosts(post)),
         savePost: (post) => dispatch(savePost(post)),
         saveComment: (comment) => dispatch(saveComment(comment))

@@ -6,7 +6,7 @@ import Posts from './posts';
 import Post from './posts/post';
 import Modal from 'react-modal';
 import CancelIcon from 'react-icons/lib/md/cancel'
-import {openModal,closeModal} from "./shared-modal-content/actions";
+import {toggleModal} from "./shared-modal-content/actions";
 import {connect} from "react-redux";
 import ModalContent from "./shared-modal-content/index";
 import createBrowserHistory from 'history/createBrowserHistory';
@@ -16,14 +16,14 @@ const history = createBrowserHistory();
 class App extends Component {
 
     onHideModal() {
-        this.props.hide({modalOpen: false})
+        this.props.toggleModal({})
     }
     onShowModal() {
-        this.props.show({modalOpen: true})
+        this.props.toggleModal({})
     }
 
     render() {
-        const {store} = this.props;
+        const {store,modalOpen} = this.props;
         return (
             <Router history={history}>
                 <div className='wrapper'>
@@ -42,9 +42,10 @@ class App extends Component {
                     <Modal
                         className='modal'
                         overlayClassName='overlay'
-                        isOpen={this.props.modalOpen}
+                        isOpen={modalOpen}
                         contentLabel='Modal'>
-                        <CancelIcon onClick={() => this.onHideModal()} className="close-icon"/>
+                        <CancelIcon onClick={() => this.onHideModal()}
+                                    className="close-icon"/>
                         <ModalContent/>
                     </Modal>
                 </div>
@@ -60,11 +61,4 @@ function mapStateToProps (state) {
     };
 }
 
-function mapDispatchToProps (dispatch) {
-    return {
-        show: (data) => dispatch(openModal(data)),
-        hide: (data) => dispatch(closeModal(data))
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps,{toggleModal})(App);

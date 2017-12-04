@@ -3,7 +3,6 @@ import Post from './post/index';
 import {connect} from "react-redux";
 import {storePosts} from './actions';
 import {isOnDetailPage} from "./post/actions";
-import * as API from "../api";
 
 class Posts extends Component {
     constructor(props) {
@@ -23,9 +22,7 @@ class Posts extends Component {
 
     componentWillMount() {
         this.props.isOnDetailPage(false);
-        API.fetchElements('/posts').then(posts => {
-            this.props.storePosts(posts,'score');
-        });
+        this.props.storePosts('score');
     }
 
     render() {
@@ -50,11 +47,4 @@ function mapStateToProps (state) {
     };
 }
 
-function mapDispatchToProps (dispatch) {
-    return {
-        storePosts: (data,sortBy) => dispatch(storePosts(data,sortBy)),
-        isOnDetailPage: (boolean) => dispatch(isOnDetailPage(boolean))
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(Posts);
+export default connect(mapStateToProps,{storePosts,isOnDetailPage})(Posts);

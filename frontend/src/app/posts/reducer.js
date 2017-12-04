@@ -10,28 +10,28 @@ function postsReducer(state = {sortBy:'score',posts:[]}, action) {
         case STORE_POSTS :
             return {
                 ...state,
-                posts: compare(action.posts,state.sortBy)
+                posts:  Object.assign([],state,compare(action.posts,state.sortBy))
             };
         case ADD_TO_POSTS :
             return {
                 ...state,
-                post: action.post,
-                posts: compare(state.posts.filter(post => {
-                    return post.id !== action.post.id
-                }).concat(action.post),state.sortBy)
+                post:   Object.assign({},state,action.post),
+                posts:  Object.assign([],state,compare(state.posts.filter(post => {
+                            return post.id !== action.post.id
+                        }).concat(action.post),state.sortBy))
             };
         case REMOVE_FROM_POSTS :
             return {
                 ...state,
-                posts: compare(state.posts.filter(post => {
-                    return post.id !== action.post.id
-                }),state.sortBy)
+                posts:  Object.assign([],state,compare(state.posts.filter(post => {
+                            return post.id !== action.post.id
+                        }),state.sortBy))
             };
         case TOGGLE_SORT :
             return {
                 ...state,
-                sortBy: action.isScore ? 'score' : 'time',
-                posts: compare(state.posts,action.isScore ? 'score' : 'time')
+                sortBy: Object.assign({},state,action.isScore ? 'score' : 'time'),
+                posts:  Object.assign([],state,compare(state.posts,action.isScore ? 'score' : 'time'))
             };
         default :
             return state

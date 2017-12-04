@@ -18,7 +18,7 @@ function postReducer(state = {
         case SAVE_POST :
             return {
                 ...state,
-                post:   action.post
+                post:   Object.assign([],state,action.post)
             };
         case DELETE_COMMENT :
             return {
@@ -30,17 +30,17 @@ function postReducer(state = {
         case ADD_COMMENTS :
             return {
                 ...state,
-                comments: Object.assign([],state,action.comments)
+                comments:   Object.assign([],state,action.comments)
             };
         case EDIT_POST :
             return {
                 ...state,
-                postData: action.post
+                postData:   Object.assign({},state,action.post)
             };
         case EDIT_COMMENT :
             return {
                 ...state,
-                commentData: action.commentData
+                commentData:    Object.assign([],state,action.commentData)
             };
         case SAVE_COMMENT :
             const index = state.comments.findIndex(comment => comment.id === action.comment.id);
@@ -49,7 +49,7 @@ function postReducer(state = {
             );
             return {
                 ...state,
-                comments: (index > -1) ? comments : state.comments.concat(action.comment)
+                comments: (index > -1) ? Object.assign([],state,comments) : Object.assign([],state,state.comments.concat(action.comment))
             };
         case IS_ON_DETAIL_PAGE :
             return {

@@ -1,6 +1,5 @@
 import {
-    OPEN_MODAL,
-    CLOSE_MODAL
+    TOGGLE_MODAL,
 } from "./action-types";
 
 function modalReducer(state = {
@@ -8,17 +7,11 @@ function modalReducer(state = {
         actionType: 'add-post'
     }, action) {
     switch (action.type) {
-        case OPEN_MODAL :
+        case TOGGLE_MODAL :
             return {
                 ...state,
-                modalOpen: true,
+                modalOpen: action.isModalOpen,
                 actionType: action.value.type
-            };
-        case CLOSE_MODAL :
-            return {
-                ...state,
-                modalOpen: false,
-                actionType: ''
             };
         default :
             return state
