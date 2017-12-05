@@ -7,6 +7,7 @@ import App from './app';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk'
 import {rootReducer} from './root-reducer';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const logger = store => next => action => {
     console.group(action.type);
@@ -27,6 +28,8 @@ const store = createStore(
 
 ReactDOM.render(
     <Provider store={store}>
-        <App/>
+        <MuiThemeProvider>
+            <App/>
+        </MuiThemeProvider>
     </Provider>, document.getElementById('root'));
 registerServiceWorker();

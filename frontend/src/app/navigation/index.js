@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
-import SortIcon from 'react-icons/lib/md/sort';
 import {connect} from 'react-redux';
 import {toggleSort} from "../posts/actions";
 import * as API from "../api/index";
+import Toggle from 'material-ui/Toggle';
 import './index.css';
 
 class Navigation extends Component {
@@ -47,11 +47,11 @@ class Navigation extends Component {
                     </Link>
                 ))}
                 <li title="Add post" onClick={() => this.onShowModal()} className='add-new nav-icon active'><AddIcon size={35}/></li>
-                <li title={`Currently sorted by ${this.props.sort}`} className='nav-icon active'>
-                    <SortIcon className={this.props.sort}
-                              onClick={() => this.onToggleSort()}
-                              size={35}/>
-                </li>
+                <Toggle labelStyle={{fontSize:13}}
+                        style={{verticalAlign: 'middle', display: 'inline-block', width: 'auto'}}
+                        labelPosition={'right'}
+                        label={`Sorted by ${this.props.sort}`}
+                        onClick={() => this.onToggleSort()}/>
             </ul>
         );
     }
