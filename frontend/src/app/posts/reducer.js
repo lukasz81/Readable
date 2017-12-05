@@ -1,37 +1,60 @@
 import {
     STORE_POSTS,
     ADD_TO_POSTS,
-    REMOVE_FROM_POSTS,
-    TOGGLE_SORT
+    SAVE_EDITED_POST,
+    REMOVE_POST,
+    TOGGLE_SORT,
+    VOTE_POSTS
 } from "./action-types";
 
-function postsReducer(state = {sortBy:'score',posts:[]}, action) {
+function postsReducer(state = {
+        sortBy:'score',
+        posts:[],
+        isPostDetailPage: false
+    }, action) {
     switch (action.type) {
         case STORE_POSTS :
             return {
                 ...state,
-                posts:  Object.assign([],state,compare(action.posts,state.sortBy))
+                posts:  compare(action.posts,state.sortBy)
             };
         case ADD_TO_POSTS :
             return {
                 ...state,
-                post:   Object.assign({},state,action.post),
-                posts:  Object.assign([],state,compare(state.posts.filter(post => {
+                post:   action.post,
+                posts:  compare(state.posts.filter(post => {
                             return post.id !== action.post.id
-                        }).concat(action.post),state.sortBy))
+                        }).concat(action.post),state.sortBy)
             };
-        case REMOVE_FROM_POSTS :
+        case SAVE_EDITED_POST :
+            console.log('SAVE_EDITED_POST =>',state);
             return {
                 ...state,
-                posts:  Object.assign([],state,compare(state.posts.filter(post => {
+                post: action.post,
+                posts:  compare(state.posts.filter(post => {
                             return post.id !== action.post.id
-                        }),state.sortBy))
+                        }).concat(action.post),state.sortBy)
+            };
+        case REMOVE_POST :
+            return {
+                ...state,
+                posts:  state.posts.filter(post => {
+                            return post.id !== action.post.id
+                        })
             };
         case TOGGLE_SORT :
+            const sort = action.isScore ? 'score' : 'time';
             return {
                 ...state,
-                sortBy: Object.assign({},state,action.isScore ? 'score' : 'time'),
-                posts:  Object.assign([],state,compare(state.posts,action.isScore ? 'score' : 'time'))
+                sortBy: sort,
+                posts:  compare(state.posts,sort)
+            };
+        case VOTE_POSTS :
+            return {
+                ...state,
+                posts:  compare(state.posts.filter(post => {
+                            return post.id !== action.post.id
+                        }).concat(action.post),state.sortBy)
             };
         default :
             return state

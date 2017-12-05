@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {toggleModal} from "./actions";
-import {savePost,saveComment} from "../posts/post/actions";
+import {fetchPost,saveComment} from "../posts/post/actions";
 import {connect} from "react-redux";
-import {addToPosts} from "../posts/actions";
+import {addToPosts,saveEditedPost} from "../posts/actions";
 import {AddOrEditPostForm} from './add-or-edit-post-form';
 import {AddOrEditCommentForm} from './add-or-edit-comment-form';
-import * as API from "../api";
 import './index.css';
 
 class ModalContent extends Component {
@@ -28,6 +27,7 @@ class ModalContent extends Component {
     }
 
     componentWillMount() {
+        console.log(this.props);
         const {postTitle,postBody,action,commentBody} = this.props;
         this.setState({
             title: action === 'edit-post' ? postTitle : '',
@@ -60,17 +60,17 @@ class ModalContent extends Component {
             case 'edit-post' :
                 return this.editPost();
             case 'add-comment' :
-                const comment = {
+                const newComment = {
                     id: this.state.id,
                     timestamp: this.state.timestamp,
                     body: this.state.body,
                     author: this.state.author,
                     parentId: this.props.post.id
                 };
-                return this.addCommentToPost(comment);
+                return this.addCommentToPost(newComment);
             default :
                 if (this.checkIfFormIsValid(this.state)) {
-                    this.fetchPost(this.state);
+                    this.addPost(this.state);
                 } else {
                     alert('Fill up all the fields please');
                 }
@@ -78,33 +78,21 @@ class ModalContent extends Component {
 
     }
 
-    fetchPost(post) {
-        API.postActions('/posts',post)
-            .then(post => {
-                this.props.addToPosts(post);
-                this.props.hide({modalOpen: false});
-            })
+    addPost(post) {
+        this.props.addToPosts(post);
+        this.props.hide({});
     }
 
-    addCommentToPost(comment) {
-        API.postActions('/comments',comment)
-            .then(comment => {
-                this.props.saveComment(comment);
-                this.props.hide({modalOpen: false});
-            })
+    addCommentToPost(newComment) {
+        this.props.hide({});
+        this.props.saveComment(newComment);
     }
 
     editPost() {
-        const {detailPage,id} = this.props;
-        const body = {
-            title: this.state.title,
-            body: this.state.body
-        };
-        API.editElements(`/posts/${id}`,body)
-            .then(post => {
-                detailPage ? this.props.savePost(post) : this.props.addToPosts(post);
-                this.props.hide({modalOpen: false});
-            });
+        const {id} = this.props;
+        const body = {title: this.state.title, body: this.state.body};
+        this.props.hide({});
+        this.props.saveEditedPost(id,body)
     }
 
     editComment() {
@@ -112,11 +100,8 @@ class ModalContent extends Component {
             timestamp: Date.now(),
             body: this.state.body
         };
-        API.editElements(`/comments/${this.props.commentId}`,body)
-            .then(comment => {
-                this.props.saveComment(comment);
-                this.props.hide({modalOpen: false})
-            })
+        this.props.saveComment(this.props.commentId,body);
+        this.props.hide({})
     }
 
     render() {
@@ -163,8 +148,9 @@ function mapDispatchToProps (dispatch) {
     return {
         hide: (data) => dispatch(toggleModal(data)),
         addToPosts: (post) => dispatch(addToPosts(post)),
-        savePost: (post) => dispatch(savePost(post)),
-        saveComment: (comment) => dispatch(saveComment(comment))
+        saveEditedPost: (id,body) => dispatch(saveEditedPost(id,body)),
+        fetchPost: (post) => dispatch(fetchPost(post)),
+        saveComment: (id,body) => dispatch(saveComment(id,body))
     };
 }
 

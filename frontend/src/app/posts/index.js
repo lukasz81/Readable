@@ -27,13 +27,15 @@ class Posts extends Component {
 
     render() {
         const {category} = this.state;
-        const posts = this.props.posts || [];
+        const posts = this.props.posts;
         const currentPath = this.props.location.pathname;
         return (
             <div className="posts">
-                {posts.filter(post => category === post.category || !category).map(post => (
-                    <Post key={post.id} post={post} path={currentPath}/>
-                ))}
+                {posts.filter(post => category === post.category || !category)
+                    .map(post => (
+                        <Post key={post.id} post={post} path={currentPath}/>
+                    ))
+                }
             </div>
         );
     }
@@ -43,7 +45,8 @@ function mapStateToProps (state) {
     return {
         post: state.postReducer.post,
         posts: state.postsReducer.posts,
-        sortBy: state.postsReducer.sortBy
+        sortBy: state.postsReducer.sortBy,
+        isPostDetailPage: state.postReducer.isPostDetailPage
     };
 }
 

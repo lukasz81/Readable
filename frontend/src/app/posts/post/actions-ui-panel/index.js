@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import Moment from 'react-moment';
-import {addToPosts,removeFromPosts} from "../../actions";
-import {editPost,editComment,deleteComment,savePost,saveComment} from "../actions";
+import {addToPosts,removeFromPosts,voteOnPosts} from "../../actions";
+import {editPost,editComment,deleteComment,fetchPost,saveComment,voteOnPost,voteOnComment} from "../actions";
 import {toggleModal} from "../../../shared-modal-content/actions";
 import {connect} from "react-redux";
 import DownVoteIcon from 'react-icons/lib/ti/thumbs-down';
 import UpVoteIcon from 'react-icons/lib/ti/thumbs-up';
 import EditIcon from 'react-icons/lib/ti/edit';
 import DeleteIcon from 'react-icons/lib/ti/trash';
-import * as API from "../../../api/index";
 
 class ActionsPanel extends Component {
 
@@ -17,26 +16,22 @@ class ActionsPanel extends Component {
     }
 
     onVote(type, id, action) {
-        API.postActions(`/${type}/${id}`,{option: action})
-            .then(response => {
-                if (type === 'posts') {
-                    this.isPostDetailPage ? this.props.savePost(response) : this.props.addToPosts(response);
-                } else {this.props.saveComment(response);}
-            })
+        if (type === 'posts') {
+            this.isPostDetailPage ? this.props.voteOnPost(id,action) : this.props.voteOnPosts(id,action);
+        } else {
+            this.props.voteOnComment(id,action);
+        }
     }
 
     onDeleteElement(type, id) {
         const sure = window.confirm(`Are you sure you want to delete the ${type.slice(0, -1)}`);
         if (sure) {
-            API.deleteElements(`/${type}/${id}`)
-                .then(element => {
-                    if (type === 'posts') {
-                        if (this.isPostDetailPage) this.props.history.push("/");
-                        this.props.removeFromPosts(element)
-                    } else {
-                        this.props.deleteComment(element);
-                    }
-                });
+            if (type === 'posts') {
+                if (this.isPostDetailPage) this.props.history.push("/");
+                this.props.removeFromPosts(id)
+            } else {
+                this.props.deleteComment(id)
+            }
         }
     }
 
@@ -101,7 +96,10 @@ class ActionsPanel extends Component {
 function mapDispatchToProps(dispatch) {
     return {
         addToPosts: (post) => dispatch(addToPosts(post)),
-        savePost: (post) => dispatch(savePost(post)),
+        voteOnPosts: (id, action) => dispatch(voteOnPosts(id, action)),
+        fetchPost: (post) => dispatch(fetchPost(post)),
+        voteOnPost: (type, id, action) => dispatch(voteOnPost(type, id, action)),
+        voteOnComment: (id, action) => dispatch(voteOnComment(id, action)),
         editPost: (post) => dispatch(editPost(post)),
         editComment: (comment) => dispatch(editComment(comment)),
         saveComment: (comment) => dispatch(saveComment(comment)),

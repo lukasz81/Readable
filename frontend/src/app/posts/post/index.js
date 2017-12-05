@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {toggleModal} from "../../shared-modal-content/actions";
-import {editPost, savePost, addComments, deleteComment, isOnDetailPage} from "./actions";
+import {editPost, fetchPost, addComments, deleteComment, isOnDetailPage} from "./actions";
 import {storePosts} from "../actions";
 import ActionsPanel from "./actions-ui-panel/index";
 import {connect} from "react-redux";
 import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import './index.css';
-import * as API from "../../api/index";
 
 class Post extends Component {
     constructor(props) {
@@ -34,19 +33,14 @@ class Post extends Component {
     }
 
     fetchPostAndSaveInStore() {
-        API.fetchElements(`/posts/${this.ID}`)
-            .then(post => {
-                this.props.savePost(post);
-            }).then(() => {
-                if (this.isPostDetailPage) this.fetchCommentsForPost()
-            })
+        if (this.isPostDetailPage) {
+            this.props.fetchPost(this.ID);
+            this.addCommentsForPost();
+        }
     }
 
-    fetchCommentsForPost() {
-        API.fetchElements(`/posts/${this.ID}/comments`)
-            .then(comments => {
-                this.props.addComments(comments)
-            });
+    addCommentsForPost() {
+        this.props.addComments(this.ID)
     }
 
     onAddComment() {
@@ -91,7 +85,7 @@ class Post extends Component {
                         {this.isPostDetailPage && (
                             <div onClick={() => this.onAddComment()}
                                  className="post-comment post-comment--cta attached--right">
-                                <small><AddIcon style={{'marginBottom': 3}} size={20}/> ADD COMMENT</small>
+                                <small><AddIcon style={{'marginBottom': 3}} size={20}/> ADD A COMMENT</small>
                             </div>
                         )}
                     </div>
@@ -107,7 +101,7 @@ function mapStateToProps(state) {
     return {
         editedTitle: state.postReducer.editedTitle,
         editedBody: state.postReducer.editedBody,
-        singlePost: state.postReducer.post,
+        singlePost: state.postsReducer.post || state.postReducer.post,
         comments: state.postReducer.comments,
         posts: state.postsReducer.posts
     };
@@ -116,7 +110,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         editPost: (data, post) => dispatch(editPost(data, post)),
-        savePost: (post) => dispatch(savePost(post)),
+        fetchPost: (post) => dispatch(fetchPost(post)),
         deleteComment: (comment) => dispatch(deleteComment(comment)),
         addComments: (comments) => dispatch(addComments(comments)),
         storePosts: (posts,sortBy) => dispatch(storePosts(posts,sortBy)),

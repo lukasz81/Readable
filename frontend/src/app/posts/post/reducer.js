@@ -1,55 +1,71 @@
 import {
-    SAVE_POST,
+    FETCH_POST,
+    VOTE_POST,
+    VOTE_COMMENT,
     DELETE_COMMENT,
     ADD_COMMENTS,
-    EDIT_POST,
-    EDIT_COMMENT,
+    EDITING_POST,
+    EDITING_COMMENT,
     SAVE_COMMENT,
     IS_ON_DETAIL_PAGE
 } from "./action-types";
 
 function postReducer(state = {
-        postData:{postTitle: ''},
+        postData: {postTitle: ''},
         commentData:{commentBody: ''},
         comments: [],
         isPostDetailPage: false
     }, action) {
     switch (action.type) {
-        case SAVE_POST :
+        case FETCH_POST :
             return {
                 ...state,
-                post:   Object.assign([],state,action.post)
+                post: action.post
+            };
+        case VOTE_POST :
+            return {
+                ...state,
+                post: action.post
+            };
+        case VOTE_COMMENT :
+            const index_ = returnListIndex(state.comments,action.comment);
+            const comments_ = state.comments.map((comment,i) =>
+                i === index_ ? action.comment : comment
+            );
+            return {
+                ...state,
+                comments:   (index_ > -1) ? comments_ : state.comments.concat(action.comment)
             };
         case DELETE_COMMENT :
             return {
                 ...state,
-                comments:   Object.assign([],state,state.comments.filter(comment => {
-                                return comment.id !== action.comment.id
-                            }))
+                comments:   state.comments.filter(comment => {
+                    return comment.id !== action.comment.id
+                })
             };
         case ADD_COMMENTS :
             return {
                 ...state,
-                comments:   Object.assign([],state,action.comments)
+                comments:   action.comments
             };
-        case EDIT_POST :
+        case EDITING_POST :
             return {
                 ...state,
-                postData:   Object.assign({},state,action.post)
+                postData:   action.post
             };
-        case EDIT_COMMENT :
+        case EDITING_COMMENT :
             return {
                 ...state,
-                commentData:    Object.assign([],state,action.commentData)
+                commentData:    action.commentData
             };
         case SAVE_COMMENT :
-            const index = state.comments.findIndex(comment => comment.id === action.comment.id);
+            const index = returnListIndex(state.comments,action.comment);
             const comments = state.comments.map((comment,i) =>
                 i === index ? action.comment : comment
             );
             return {
                 ...state,
-                comments: (index > -1) ? Object.assign([],state,comments) : Object.assign([],state,state.comments.concat(action.comment))
+                comments:   (index > -1) ? comments : state.comments.concat(action.comment)
             };
         case IS_ON_DETAIL_PAGE :
             return {
@@ -59,6 +75,10 @@ function postReducer(state = {
         default :
             return state
     }
+}
+
+function returnListIndex(elements,element) {
+    return elements.findIndex(el => el.id === element.id)
 }
 
 export {postReducer}

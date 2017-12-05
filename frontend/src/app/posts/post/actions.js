@@ -1,51 +1,91 @@
-import {SAVE_POST} from "./action-types";
-import {DELETE_COMMENT} from "./action-types";
-import {ADD_COMMENTS} from "./action-types";
-import {EDIT_POST} from "./action-types";
-import {EDIT_COMMENT} from "./action-types";
-import {SAVE_COMMENT} from "./action-types";
-import {IS_ON_DETAIL_PAGE} from "./action-types";
+import {
+    FETCH_POST,
+    VOTE_POST,
+    VOTE_COMMENT,
+    DELETE_COMMENT,
+    ADD_COMMENTS,
+    EDITING_POST,
+    EDITING_COMMENT,
+    SAVE_COMMENT,
+    IS_ON_DETAIL_PAGE
+} from "./action-types";
+import * as API from "../../api/index";
 
-export function savePost (post) {
-    return {
-        type: SAVE_POST,
-        post
+export function fetchPost(ID) {
+    return (dispatch) => {
+        API.fetchElements(`/posts/${ID}`)
+            .then(post => dispatch({
+                type: FETCH_POST,
+                post
+            }))
     };
 }
 
-export function deleteComment (comment) {
-    return {
-        type: DELETE_COMMENT,
-        comment
+export function voteOnPost(ID, action) {
+    return (dispatch) => {
+        API.postActions(`/posts/${ID}`,{option: action})
+            .then(post => dispatch({
+                type: VOTE_POST,
+                action: action,
+                post: post
+            }))
     };
 }
 
-export function addComments (comments) {
-    return {
-        type: ADD_COMMENTS,
-        comments
+export function voteOnComment(ID, action) {
+    return (dispatch) => {
+        API.postActions(`/comments/${ID}`,{option: action})
+            .then(comment => dispatch({
+                type: VOTE_COMMENT,
+                action: action,
+                comment: comment
+            }))
     };
+}
+
+export function deleteComment (ID) {
+    return (dispatch) => {
+        API.deleteElements(`/comments/${ID}`)
+            .then(comment => dispatch({
+                type: DELETE_COMMENT,
+                comment
+            }));
+    }
+}
+
+export function addComments (ID) {
+    return (dispatch) => {
+        API.fetchElements(`/posts/${ID}/comments`)
+            .then(comments => dispatch({
+                    type: ADD_COMMENTS,
+                    comments
+                })
+            );
+    }
 }
 
 export function editPost (post) {
     return {
-        type: EDIT_POST,
+        type: EDITING_POST,
         post
     };
 }
 
 export function editComment (commentData) {
     return {
-        type: EDIT_COMMENT,
+        type: EDITING_COMMENT,
         commentData
     };
 }
 
-export function saveComment (comment) {
-    return {
-        type: SAVE_COMMENT,
-        comment
-    };
+export function saveComment (ID,body) {
+    return (dispatch) => {
+        API.editElements(`/comments/${ID}`,body)
+            .then(comment => dispatch({
+                type: SAVE_COMMENT,
+                comment
+            }))
+    }
 }
 
 export function isOnDetailPage (isPostDetailPage) {

@@ -1,7 +1,9 @@
-export const SAVE_POST = 'SAVE_POST';
+export const FETCH_POST = 'FETCH_POST';
+export const VOTE_POST = 'VOTE_POST';
+export const VOTE_COMMENT = 'VOTE_COMMENT';
 export const DELETE_COMMENT = 'DELETE_COMMENT';
 export const ADD_COMMENTS = 'ADD_COMMENTS';
-export const EDIT_POST = 'EDIT_POST';
-export const EDIT_COMMENT = 'EDIT_COMMENT';
+export const EDITING_POST = 'EDITING_POST';
+export const EDITING_COMMENT = 'EDITING_COMMENT';
 export const SAVE_COMMENT = 'SAVE_COMMENT';
 export const IS_ON_DETAIL_PAGE = 'IS_ON_DETAIL_PAGE';
