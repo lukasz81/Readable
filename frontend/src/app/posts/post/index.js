@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {toggleModal} from "../../shared-modal-content/actions";
-import {editPost, fetchPost, addComments, deleteComment, isOnDetailPage} from "./actions";
+import {editPost, fetchPost, addComments, deleteComment, isPostDetailPage} from "./actions";
 import {storePosts} from "../actions";
 import ActionsPanel from "./actions-ui-panel/index";
 import {connect} from "react-redux";
@@ -28,7 +28,7 @@ class Post extends Component {
     componentWillMount() {
         if (this.isPostDetailPage) {
             this.fetchPostAndSaveInStore(this.ID);
-            this.props.isOnDetailPage(this.isPostDetailPage);
+            this.props.isPostDetailPage(this.isPostDetailPage);
         }
     }
 
@@ -115,7 +115,7 @@ function mapDispatchToProps(dispatch) {
         addComments: (comments) => dispatch(addComments(comments)),
         storePosts: (posts,sortBy) => dispatch(storePosts(posts,sortBy)),
         toggleModal: (data) => dispatch(toggleModal(data)),
-        isOnDetailPage: (boolean) => dispatch(isOnDetailPage(boolean))
+        isPostDetailPage: (boolean) => dispatch(isPostDetailPage(boolean))
     }
 }
 

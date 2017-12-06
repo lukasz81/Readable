@@ -88,7 +88,7 @@ export function saveComment (ID,body) {
     }
 }
 
-export function isOnDetailPage (isPostDetailPage) {
+export function isPostDetailPage (isPostDetailPage) {
     return {
         type: IS_ON_DETAIL_PAGE,
         isPostDetailPage

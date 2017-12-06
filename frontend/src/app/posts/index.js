@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Post from './post/index';
 import {connect} from "react-redux";
 import {storePosts} from './actions';
-import {isOnDetailPage} from "./post/actions";
+import {isPostDetailPage} from "./post/actions";
 
 class Posts extends Component {
     constructor(props) {
@@ -21,7 +21,7 @@ class Posts extends Component {
     }
 
     componentWillMount() {
-        this.props.isOnDetailPage(false);
+        this.props.isPostDetailPage(false);
         this.props.storePosts('score');
     }
 
@@ -50,4 +50,4 @@ function mapStateToProps (state) {
     };
 }
 
-export default connect(mapStateToProps,{storePosts,isOnDetailPage})(Posts);
+export default connect(mapStateToProps,{storePosts,isPostDetailPage})(Posts);

@@ -4,7 +4,8 @@ import AddIcon from 'react-icons/lib/md/add-circle-outline';
 import {connect} from 'react-redux';
 import {toggleSort} from "../posts/actions";
 import * as API from "../api/index";
-import Toggle from 'material-ui/Toggle';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
 import './index.css';
 
 class Navigation extends Component {
@@ -34,11 +35,14 @@ class Navigation extends Component {
     }
 
     render() {
+        const {isPostDetailPage,sort} = this.props;
         const {categories} = this.state;
         const currentPath = this.props.location.pathname;
         return (
             <ul className="nav">
-                <Link to="/"><li className={Navigation.chooseClassNameForLink(currentPath, '')}>ALL</li></Link>
+                <Link to="/">
+                    <li className={Navigation.chooseClassNameForLink(currentPath, '')}>ALL</li>
+                </Link>
                 {categories.map((category, index) => (
                     <Link key={index} to={`/${category.path}`}>
                         <li className={Navigation.chooseClassNameForLink(currentPath, category.path)}>
@@ -46,12 +50,21 @@ class Navigation extends Component {
                         </li>
                     </Link>
                 ))}
-                <li title="Add post" onClick={() => this.onShowModal()} className='add-new nav-icon active'><AddIcon size={35}/></li>
-                <Toggle labelStyle={{fontSize:13}}
-                        style={{verticalAlign: 'middle', display: 'inline-block', width: 'auto'}}
-                        labelPosition={'right'}
-                        label={`Sorted by ${this.props.sort}`}
-                        onClick={() => this.onToggleSort()}/>
+                <li title="Add post" onClick={() => this.onShowModal()} className='add-new nav-icon active'>
+                    <AddIcon size={35}/>
+                </li>
+                {isPostDetailPage === false && (
+                    <li className='nav-icon active material-holder'>
+                        <DropDownMenu value={sort === 'score' ? 1 : 2}
+                                      onChange={() => this.onToggleSort()}>
+                            <MenuItem value={1}
+                                      primaryText={`Sort by score`}/>
+                            <MenuItem value={2}
+                                      primaryText={`Sort by time`}/>
+                        </DropDownMenu>
+                    </li>
+                )}
+
             </ul>
         );
     }
@@ -66,7 +79,8 @@ function mapDispatchToProps (dispatch) {
 function mapStateToProps (state) {
     return {
         state,
-        sort: state.postsReducer.sortBy ? state.postsReducer.sortBy : 'score'
+        sort: state.postsReducer.sortBy ? state.postsReducer.sortBy : 'score',
+        isPostDetailPage: state.postReducer.isPostDetailPage
     }
 }
 

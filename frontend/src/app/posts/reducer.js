@@ -10,7 +10,6 @@ import {
 function postsReducer(state = {
         sortBy:'score',
         posts:[],
-        isPostDetailPage: false
     }, action) {
     switch (action.type) {
         case STORE_POSTS :
@@ -27,7 +26,6 @@ function postsReducer(state = {
                         }).concat(action.post),state.sortBy)
             };
         case SAVE_EDITED_POST :
-            console.log('SAVE_EDITED_POST =>',state);
             return {
                 ...state,
                 post: action.post,

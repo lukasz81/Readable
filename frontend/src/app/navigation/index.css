@@ -8,6 +8,11 @@ li.nav-icon.active {
     margin: 0;
     cursor: pointer;
 }
+li.nav-icon.active.material-holder {
+    padding: 0;
+    position: absolute;
+    margin-top: -10px;
+}
 
 li.nav-icon.active svg {
     color: #00bcd4;
