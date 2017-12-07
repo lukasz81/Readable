@@ -6,4 +6,5 @@ export const ADD_COMMENTS = 'ADD_COMMENTS';
 export const EDITING_POST = 'EDITING_POST';
 export const EDITING_COMMENT = 'EDITING_COMMENT';
 export const SAVE_COMMENT = 'SAVE_COMMENT';
+export const ADD_NEW_COMMENT = 'ADD_NEW_COMMENT';
 export const IS_ON_DETAIL_PAGE = 'IS_ON_DETAIL_PAGE';

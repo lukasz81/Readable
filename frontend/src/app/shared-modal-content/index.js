@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {toggleModal} from "./actions";
-import {fetchPost,saveComment} from "../posts/post/actions";
+import {fetchPost,saveComment,addNewComment} from "../posts/post/actions";
 import {connect} from "react-redux";
 import {addToPosts,saveEditedPost} from "../posts/actions";
 import {AddOrEditPostForm} from './add-or-edit-post-form';
@@ -27,7 +27,6 @@ class ModalContent extends Component {
     }
 
     componentWillMount() {
-        console.log(this.props);
         const {postTitle,postBody,action,commentBody} = this.props;
         this.setState({
             title: action === 'edit-post' ? postTitle : '',
@@ -85,7 +84,7 @@ class ModalContent extends Component {
 
     addCommentToPost(newComment) {
         this.props.hide({});
-        this.props.saveComment(newComment);
+        this.props.addNewComment(newComment);
     }
 
     editPost() {
@@ -150,7 +149,8 @@ function mapDispatchToProps (dispatch) {
         addToPosts: (post) => dispatch(addToPosts(post)),
         saveEditedPost: (id,body) => dispatch(saveEditedPost(id,body)),
         fetchPost: (post) => dispatch(fetchPost(post)),
-        saveComment: (id,body) => dispatch(saveComment(id,body))
+        saveComment: (id,body) => dispatch(saveComment(id,body)),
+        addNewComment: (comment) => dispatch(addNewComment(comment))
     };
 }
 

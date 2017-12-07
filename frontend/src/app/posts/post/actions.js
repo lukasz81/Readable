@@ -7,6 +7,7 @@ import {
     EDITING_POST,
     EDITING_COMMENT,
     SAVE_COMMENT,
+    ADD_NEW_COMMENT,
     IS_ON_DETAIL_PAGE
 } from "./action-types";
 import * as API from "../../api/index";
@@ -83,6 +84,16 @@ export function saveComment (ID,body) {
         API.editElements(`/comments/${ID}`,body)
             .then(comment => dispatch({
                 type: SAVE_COMMENT,
+                comment
+            }))
+    }
+}
+
+export function addNewComment (body) {
+    return (dispatch) => {
+        API.postActions('/comments',body)
+            .then(comment => dispatch({
+                type: ADD_NEW_COMMENT,
                 comment
             }))
     }

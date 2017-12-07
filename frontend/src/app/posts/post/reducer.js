@@ -7,6 +7,7 @@ import {
     EDITING_POST,
     EDITING_COMMENT,
     SAVE_COMMENT,
+    ADD_NEW_COMMENT,
     IS_ON_DETAIL_PAGE
 } from "./action-types";
 
@@ -66,6 +67,11 @@ function postReducer(state = {
             return {
                 ...state,
                 comments:   (index > -1) ? comments : state.comments.concat(action.comment)
+            };
+        case ADD_NEW_COMMENT :
+            return {
+                ...state,
+                comments: state.comments.concat(action.comment)
             };
         case IS_ON_DETAIL_PAGE :
             return {
